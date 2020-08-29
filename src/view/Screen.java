@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 
-public class Graph extends Canvas{
+public class Screen extends Canvas{
     private final int WIDTH;
     private final int HEIGHT;
 
     private ArrayList<Point> obstacles;
     private GraphicsContext gc;
 
-    public Graph() {
+    public Screen() {
         WIDTH = 300;
         HEIGHT = 300;
 

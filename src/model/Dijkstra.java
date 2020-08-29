@@ -6,29 +6,35 @@ import java.util.LinkedList;
 
 public class Dijkstra implements Algorithm{
 
-    private final int MAX_X_COOR = 30, MAX_Y_COOR = 30;
+    private final int MAX_X_COOR;
+    private final int MAX_Y_COOR;
 
     private ArrayList<Point> visited;
 
-    private DijkNode[][] table;
-    private DijkNode startNode;
-    private DijkNode endNode;
-    private DijkNode current;
+    private Node[][] table;
+    private Node startNode;
+    private Node endNode;
+    private Node current;
 
 
-    public Dijkstra(Point startPoint, Point endPoint) {
+    public Dijkstra(Point startPoint, Point endPoint, Graph graph) {
 
-        table = new DijkNode[MAX_X_COOR][MAX_Y_COOR];
+        this.MAX_X_COOR = graph.getWIDTH();
+        this.MAX_Y_COOR = graph.getHEIGHT();
+
+        table = new Node[MAX_X_COOR][MAX_Y_COOR];
         visited = new ArrayList<Point>();
 
         // initalize table of nodes
         for (int i = 0; i < MAX_X_COOR; i++) {
 
             for (int j = 0; j < MAX_Y_COOR; j++) {
-                table[i][j] = new DijkNode(i, j);
+                table[i][j] = new Node(i, j);
 
             }
         }
+
+        setObstacles(graph.getObstacles());
 
         startNode = table[startPoint.x][startPoint.y];
         startNode.setDist(0);
@@ -40,10 +46,10 @@ public class Dijkstra implements Algorithm{
     }
 
     @Override
-    public LinkedList<Point> getShortestPath() {
+    public LinkedList<Point> getPath() {
         System.out.println("length of path is " + endNode.getDist());
         LinkedList<Point> list = new LinkedList<Point>();
-        DijkNode temp = endNode;
+        Node temp = endNode;
 
         while(temp != null) {
 
@@ -56,9 +62,9 @@ public class Dijkstra implements Algorithm{
 
     }
 
-    private DijkNode getMinDistReachable() {
+    private Node getMinDistReachable() {
         double min = Integer.MAX_VALUE;
-        DijkNode minNode = null;
+        Node minNode = null;
 
         for(int x = 0; x < MAX_X_COOR; x++) {
 
@@ -74,10 +80,10 @@ public class Dijkstra implements Algorithm{
         return minNode;
     }
 
-    private void visit(DijkNode node) {
+    private void visit(Node node) {
 
         double min = Double.MAX_VALUE;
-        DijkNode minNode = null;
+        Node minNode = null;
 
         //checks the distance to the eight surrounding nodes in a grid
 
@@ -86,7 +92,8 @@ public class Dijkstra implements Algorithm{
             for(int y = node.getyCoor() - 1; y < node.getyCoor() + 2; y++) {
 
                 if(x == node.getxCoor() && y == node.getyCoor()) continue;
-                if(x < 0 || !(x < MAX_X_COOR) || y < 0 || !(y < MAX_Y_COOR) || table[x][y].isObstacle()) continue;
+                if(x < 0 || !(x < MAX_X_COOR) || y < 0 || !(y < MAX_Y_COOR)
+                        || table[x][y].isObstacle() || table[x][y].isVisited()) continue;
 
                 int xTemp = node.getxCoor() - x, yTemp = node.getyCoor() - y;
                 double temp;
@@ -97,7 +104,7 @@ public class Dijkstra implements Algorithm{
                     temp = 1.0;
                 }
 
-                if(temp + node.getDist() < table[x][y].getDist() && !table[x][y].isVisited()) {
+                if(temp + node.getDist() < table[x][y].getDist()) {
                     table[x][y].setDist(temp + node.getDist());
                     table[x][y].setPrev(node);
                 }
@@ -113,6 +120,13 @@ public class Dijkstra implements Algorithm{
         node.setVisited(true);
         visited.add(new Point(node.getxCoor(), node.getyCoor()));
     }
+
+    public void setObstacles(ArrayList<Point> list) {
+        for(Point p : list) {
+            table[p.x][p.y].setObstacle();
+        }
+    }
+
     @Override
     public void visitNext() {
         visit(current);
@@ -127,13 +141,6 @@ public class Dijkstra implements Algorithm{
     @Override
     public ArrayList<Point> getVisited() {
         return visited;
-    }
-
-    @Override
-    public void setObstacles(ArrayList<Point> list) {
-        for(Point p : list) {
-            table[p.x][p.y].setObstacle();
-        }
     }
 
     @Override

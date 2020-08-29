@@ -3,12 +3,10 @@ package controller;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import model.AStar;
-import model.Algorithm;
-import model.Dijkstra;
+import model.*;
 import view.*;
 
-import java.awt.*;
+import java.awt.Point;
 
 public class Controller implements Runnable{
 
@@ -16,44 +14,49 @@ public class Controller implements Runnable{
 
     private View view;
     private Algorithm alg;
+    private Graph graph;
 
     public Controller(View view) {
         this.view = view;
+        this.graph = new Graph();
+
         initListeners();
+
     }
 
     private void initListeners() {
 
-        Graph graph = view.getGraph();
+        Screen screen = view.getScreen();
         view.getStartButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 if(view.getAlgoMenu().getValue() == null || view.getStartCoorField().getText() == null ||
                         view.getEndCoorField().getText() == null) return;
 
-                graph.setClear();
-                graph.drawGrid();
-                graph.drawWall();
+                screen.setClear();
+                screen.drawGrid();
+                screen.drawWall();
                 int[] startCoor = getNums(view.getStartCoorField().getText());
                 int[] endCoor = getNums(view.getEndCoorField().getText());
                 Point startPoint = new Point(startCoor[0], startCoor[1]);
                 Point endPoint = new Point(endCoor[0], endCoor[1]);
 
                 if(view.getAlgoMenu().getValue().equals("Dijkstra's algorithm")) {
-                    alg = new Dijkstra(startPoint, endPoint);
+                    alg = new Dijkstra(startPoint, endPoint, graph);
+                }
+                else if(view.getAlgoMenu().getValue().equals("A* algorithm")){
+                    alg = new AStar(startPoint, endPoint, graph);
+                }
+                else if(view.getAlgoMenu().getValue().equals("Depth First Search")){
+                    alg = new DepthFirstSearch(startPoint, endPoint, graph);
                 }
                 else {
-                    alg = new AStar(startPoint, endPoint);
+                    alg = new BreadthFirstSearch(startPoint, endPoint, graph);
                 }
                 runAlgorithm();
             }
         });
 
-    }
-
-    private void runAlgorithm() {
-        thread = new Thread(this, "Path algorithm thread");
-        thread.start();
     }
 
     private int[] getNums(String text) {
@@ -79,21 +82,24 @@ public class Controller implements Runnable{
         return res;
     }
 
+    private void runAlgorithm() {
+        thread = new Thread(this, "Path algorithm thread");
+        thread.start();
+    }
+
     @Override
     public void run() {
 
-        Graph graph = view.getGraph();
-        alg.setObstacles(graph.getObstacles());
+        Screen screen = view.getScreen();
 
         while(!alg.endNodeIsVisited()) {
 
             alg.visitNext();
-            //graph.setClear();
 
             Platform.runLater(() -> {
-                graph.drawVisited(alg.getVisited());
-                graph.drawGrid();
-                graph.drawPoint(new Point(alg.getStartCoor().x, alg.getStartCoor().y));
+                screen.drawVisited(alg.getVisited());
+                screen.drawGrid();
+                screen.drawPoint(new Point(alg.getStartCoor().x, alg.getStartCoor().y));
             });
 
 
@@ -105,7 +111,7 @@ public class Controller implements Runnable{
 
         }
 
-        graph.drawPath(alg.getShortestPath());
+        screen.drawPath(alg.getPath());
 
     }
 }

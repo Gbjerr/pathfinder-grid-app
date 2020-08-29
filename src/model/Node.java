@@ -1,7 +1,7 @@
 package model;
 
-public class DijkNode {
-    private DijkNode prev;
+public class Node {
+    private Node prev;
 
     private boolean visited;
     private boolean isObstacle;
@@ -10,7 +10,7 @@ public class DijkNode {
     private final int yCoor;
     private double dist;
 
-    public DijkNode(int xCoor, int yCoor) {
+    public Node(int xCoor, int yCoor) {
         this.prev = null;
 
         this.visited = false;
@@ -19,7 +19,7 @@ public class DijkNode {
         this.yCoor = yCoor;
     }
 
-    public void setPrev(DijkNode prev) {
+    public void setPrev(Node prev) {
         this.prev = prev;
     }
 
@@ -31,7 +31,7 @@ public class DijkNode {
         this.dist = dist;
     }
 
-    public DijkNode getPrev() {
+    public Node getPrev() {
         return prev;
     }
 

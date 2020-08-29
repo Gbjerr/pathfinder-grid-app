@@ -1,7 +1,7 @@
 package model;
 
-public class ANode {
-    private ANode prev;
+public class AStarNode {
+    private AStarNode prev;
 
     private boolean visited;
     private boolean obstacle;
@@ -22,7 +22,7 @@ public class ANode {
         return yCoor;
     }
 
-    public ANode(int xCoor, int yCoor, double HDist) {
+    public AStarNode(int xCoor, int yCoor, double HDist) {
         this.prev = null;
         this.xCoor = xCoor;
         this.yCoor = yCoor;
@@ -32,11 +32,11 @@ public class ANode {
         this.GDist = this.FCost = Double.MAX_VALUE;
     }
 
-    public ANode getPrev() {
+    public AStarNode getPrev() {
         return prev;
     }
 
-    public void setPrev(ANode prev) {
+    public void setPrev(AStarNode prev) {
         this.prev = prev;
     }
 

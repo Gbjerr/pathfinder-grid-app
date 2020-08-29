@@ -10,26 +10,28 @@ public class AStar implements Algorithm{
 
     private ArrayList<Point> visited;
 
-    private ANode[][] table;
-    private ANode startNode;
-    private ANode endNode;
-    private ANode current;
+    private AStarNode[][] table;
+    private AStarNode startNode;
+    private AStarNode endNode;
+    private AStarNode current;
 
 
-    public AStar(Point startPoint, Point endPoint) {
+    public AStar(Point startPoint, Point endPoint, Graph graph) {
 
         visited = new ArrayList<Point>();
-        this.table = new ANode[MAX_X_COOR][MAX_Y_COOR];
+        this.table = new AStarNode[MAX_X_COOR][MAX_Y_COOR];
 
         // initalize table of nodes
         for (int x = 0; x < MAX_X_COOR; x++) {
 
             for (int y = 0; y < MAX_Y_COOR; y++) {
                 double HDist = Math.sqrt(Math.pow(endPoint.x - x, 2) + Math.pow(endPoint.y - y, 2));
-                table[x][y] = new ANode(x, y, HDist);
+                table[x][y] = new AStarNode(x, y, HDist);
 
             }
         }
+
+        setObstacles(graph.getObstacles());
 
         this.startNode = table[startPoint.x][startPoint.y];
         this.startNode.setGDist(0);
@@ -41,25 +43,9 @@ public class AStar implements Algorithm{
 
     }
 
-    public LinkedList<Point> getShortestPathTo(ANode node) {
-        System.out.println("length of path is " + node.getGDist());
-        LinkedList<Point> list = new LinkedList<Point>();
-        ANode temp = node;
-
-        while(temp != null) {
-
-            System.out.println(" <- (" + temp.getxCoor() + " " + temp.getyCoor() + ")");
-            list.add(new Point(temp.getxCoor(), temp.getyCoor()));
-            temp = temp.getPrev();
-        }
-
-        return list;
-
-    }
-
-    private ANode getMinDistReachable() {
+    private AStarNode getMinDistReachable() {
         double min = Integer.MAX_VALUE;
-        ANode minNode = null;
+        AStarNode minNode = null;
 
         for(int x = 0; x < MAX_X_COOR; x++) {
 
@@ -76,7 +62,7 @@ public class AStar implements Algorithm{
     }
 
 
-    private void visit(ANode node) {
+    private void visit(AStarNode node) {
         //checks the distance to the eight surrounding nodes in a grid
 
         for(int x = node.getxCoor() - 1; x < node.getxCoor() + 2; x++) {
@@ -84,7 +70,8 @@ public class AStar implements Algorithm{
             for(int y = node.getyCoor() - 1; y < node.getyCoor() + 2; y++) {
 
                 if(x == node.getxCoor() && y == node.getyCoor()) continue;
-                if(x < 0 || !(x < MAX_X_COOR) || y < 0 || !(y < MAX_Y_COOR) || table[x][y].isObstacle()) continue;
+                if(x < 0 || !(x < MAX_X_COOR) || y < 0 || !(y < MAX_Y_COOR)
+                        || table[x][y].isObstacle() || table[x][y].isVisited()) continue;
 
                 int xTemp = node.getxCoor() - x, yTemp = node.getyCoor() - y;
                 double temp;
@@ -95,7 +82,7 @@ public class AStar implements Algorithm{
                     temp = 1.0;
                 }
 
-                if(temp + node.getGDist() < table[x][y].getGDist() && !table[x][y].isVisited()) {
+                if(temp + node.getGDist() < table[x][y].getGDist()) {
                     table[x][y].setGDist(temp + node.getGDist());
                     table[x][y].setFCost(table[x][y].getHDist() + table[x][y].getGDist());
                     table[x][y].setPrev(node);
@@ -109,10 +96,10 @@ public class AStar implements Algorithm{
     }
 
     @Override
-    public LinkedList<Point> getShortestPath() {
+    public LinkedList<Point> getPath() {
         System.out.println("length of path is " + endNode.getGDist());
         LinkedList<Point> list = new LinkedList<Point>();
-        ANode temp = endNode;
+        AStarNode temp = endNode;
 
         while(temp != null) {
 
@@ -125,17 +112,16 @@ public class AStar implements Algorithm{
 
     }
 
-    @Override
-    public void visitNext() {
-        visit(current);
-        current = getMinDistReachable();
-    }
-
-    @Override
     public void setObstacles(ArrayList<Point> list) {
         for(Point p : list) {
             table[p.x][p.y].setObstacle();
         }
+    }
+
+    @Override
+    public void visitNext() {
+        visit(current);
+        current = getMinDistReachable();
     }
 
     @Override

@@ -8,7 +8,7 @@ import javafx.scene.layout.Pane;
 
 public class View extends Pane {
 
-    private Graph graph;
+    private Screen screen;
 
     private TextField startCoorField;
     private TextField endCoorField;
@@ -24,10 +24,12 @@ public class View extends Pane {
         algoMenu = new ComboBox();
         algoMenu.getItems().add("Dijkstra's algorithm");
         algoMenu.getItems().add("A* algorithm");
+        algoMenu.getItems().add("Depth First Search");
+        algoMenu.getItems().add("Breadth First Search");
 
         startButton = new Button("Get Shortest path");
 
-        graph = new Graph();
+        screen = new Screen();
         initContent();
     }
 
@@ -39,7 +41,7 @@ public class View extends Pane {
         endCoorField.setLayoutY(70);
         endCoorField.setLayoutX(70);
 
-        graph.setLayoutY(130);
+        screen.setLayoutY(130);
 
         algoMenu.setLayoutY(100);
         algoMenu.setLayoutX(70);
@@ -48,16 +50,16 @@ public class View extends Pane {
         startButton.setLayoutX(90);
         startButton.setLayoutY(10);
 
-        graph.drawGrid();
-        graph.drawWall();
+        screen.drawGrid();
+        screen.drawWall();
 
-        getChildren().addAll(startButton, graph, startCoorField, endCoorField, algoMenu);
+        getChildren().addAll(startButton, screen, startCoorField, endCoorField, algoMenu);
 
     }
 
 
-    public Graph getGraph() {
-        return graph;
+    public Screen getScreen() {
+        return screen;
     }
 
     public TextField getStartCoorField() {
