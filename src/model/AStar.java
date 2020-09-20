@@ -6,7 +6,8 @@ import java.util.LinkedList;
 
 public class AStar implements Algorithm{
 
-    private final int MAX_X_COOR = 30, MAX_Y_COOR = 30;
+    private final int MAX_X_COOR;
+    private final int MAX_Y_COOR;
 
     private ArrayList<Point> visited;
 
@@ -17,6 +18,9 @@ public class AStar implements Algorithm{
 
 
     public AStar(Point startPoint, Point endPoint, Graph graph) {
+
+        MAX_X_COOR = graph.getWIDTH();
+        MAX_Y_COOR = graph.getHEIGHT();
 
         visited = new ArrayList<Point>();
         this.table = new AStarNode[MAX_X_COOR][MAX_Y_COOR];

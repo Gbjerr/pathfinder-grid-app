@@ -37,50 +37,15 @@ public class Screen extends Canvas{
 
     }
 
-    public void drawWall() {
-        ArrayList<Point> list = new ArrayList<Point>();
+    public void drawWall(ArrayList<Point> list) {
 
         gc.setFill(Color.BLACK);
 
-        for (int x = 0; x < 30; x++) {
-
-            for (int y = 0; y < 30; y++) {
-
-                if(x == 22 && y > 4 && y < 28) {
-
-                    gc.fillRect(x * 10, y * 10, 10, 10);
-                    obstacles.add(new Point(x, y));
-                }
-                if(y == 27 && x > 4 && x < 23) {
-
-                    gc.fillRect(x * 10, y * 10, 10, 10);
-                    obstacles.add(new Point(x, y));
-                }
-
-                if(y < 15 && x < 15 && x > 5) {
-
-                    gc.fillRect(x * 10, y * 10, 10, 10);
-                    obstacles.add(new Point(x, y));
-                }
-
-                if(y == 21 && x > 15 && x < 29) {
-
-                    gc.fillRect(x * 10, y * 10, 10, 10);
-                    obstacles.add(new Point(x, y));
-                }
-
-                if(y > 24 && y < 28 && x > 15 && x < 29) {
-
-                    gc.fillRect(x * 10, y * 10, 10, 10);
-                    obstacles.add(new Point(x, y));
-                }
-
-            }
+        for(Point p : list) {
+            gc.fillRect(p.x * 10, p.y * 10, 10, 10);
+            obstacles.add(new Point(p.x, p.y));
         }
     }
-
-
-
 
     public void drawPoint(Point point) {
         gc.setFill(Color.LIMEGREEN);
@@ -114,6 +79,10 @@ public class Screen extends Canvas{
 
     public ArrayList<Point> getObstacles() {
         return obstacles;
+    }
+
+    public GraphicsContext getGc() {
+        return gc;
     }
 
 }

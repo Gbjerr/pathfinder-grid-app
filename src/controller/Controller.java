@@ -3,6 +3,8 @@ package controller;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import model.*;
 import view.*;
 
@@ -28,14 +30,16 @@ public class Controller implements Runnable{
 
         Screen screen = view.getScreen();
         view.getStartButton().setOnAction(new EventHandler<ActionEvent>() {
+
             @Override
             public void handle(ActionEvent actionEvent) {
                 if(view.getAlgoMenu().getValue() == null || view.getStartCoorField().getText() == null ||
                         view.getEndCoorField().getText() == null) return;
 
                 screen.setClear();
+
                 screen.drawGrid();
-                screen.drawWall();
+                screen.drawWall(graph.getObstacles());
                 int[] startCoor = getNums(view.getStartCoorField().getText());
                 int[] endCoor = getNums(view.getEndCoorField().getText());
                 Point startPoint = new Point(startCoor[0], startCoor[1]);
@@ -54,6 +58,32 @@ public class Controller implements Runnable{
                     alg = new BreadthFirstSearch(startPoint, endPoint, graph);
                 }
                 runAlgorithm();
+            }
+        });
+
+        view.getClearButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                graph.reset();
+                screen.setClear();
+                screen.drawGrid();
+            }
+        });
+
+        screen.setOnMouseDragged(new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                double x = (mouseEvent.getX() - (mouseEvent.getX() % 10)) / 10;
+                double y = (mouseEvent.getY() - (mouseEvent.getY()) % 10) / 10;
+
+                if(x < graph.getWIDTH() && y < graph.getHEIGHT() && x >= 0 && y >= 0) {
+                    graph.setObstacle(x, y);
+
+                    screen.getGc().setFill(Color.BLACK);
+                    screen.getGc().fillRect(x * 10, y * 10, 10, 10);
+                }
+
             }
         });
 

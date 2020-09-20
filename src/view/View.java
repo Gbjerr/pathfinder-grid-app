@@ -13,7 +13,9 @@ public class View extends Pane {
     private TextField startCoorField;
     private TextField endCoorField;
     private ComboBox algoMenu;
+
     private Button startButton;
+    private Button clearButton;
 
     public View() {
         setPrefSize(300, 430);
@@ -28,6 +30,7 @@ public class View extends Pane {
         algoMenu.getItems().add("Breadth First Search");
 
         startButton = new Button("Get Shortest path");
+        clearButton = new Button("Clear");
 
         screen = new Screen();
         initContent();
@@ -46,14 +49,15 @@ public class View extends Pane {
         algoMenu.setLayoutY(100);
         algoMenu.setLayoutX(70);
 
-
         startButton.setLayoutX(90);
         startButton.setLayoutY(10);
 
-        screen.drawGrid();
-        screen.drawWall();
+        clearButton.setLayoutY(100);
+        clearButton.setLayoutX(240);
 
-        getChildren().addAll(startButton, screen, startCoorField, endCoorField, algoMenu);
+        screen.drawGrid();
+
+        getChildren().addAll(startButton, clearButton, screen, startCoorField, endCoorField, algoMenu);
 
     }
 
@@ -76,5 +80,9 @@ public class View extends Pane {
 
     public Button getStartButton() {
         return startButton;
+    }
+
+    public Button getClearButton() {
+        return clearButton;
     }
 }
