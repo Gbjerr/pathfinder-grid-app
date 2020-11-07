@@ -5,7 +5,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
-
+/**
+ * Class representation of the view containing all visual modules, screens and buttons
+ */
 public class View extends Pane {
 
     private Screen screen;
@@ -17,6 +19,9 @@ public class View extends Pane {
     private Button startButton;
     private Button clearButton;
 
+    /**
+     * constructor initializes all visual modules
+     */
     public View() {
         setPrefSize(300, 430);
 
@@ -36,6 +41,9 @@ public class View extends Pane {
         initContent();
     }
 
+    /**
+     * method positions all modules
+     */
     public void initContent() {
 
         startCoorField.setLayoutY(40);
@@ -61,6 +69,7 @@ public class View extends Pane {
 
     }
 
+    //-------------------------- Bunch of setters and getters below
 
     public Screen getScreen() {
         return screen;

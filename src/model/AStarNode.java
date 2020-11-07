@@ -1,19 +1,38 @@
 package model;
 
+/**
+ * Class representation of node used in the AStar algorithm
+ */
 public class AStarNode {
     private AStarNode prev;
 
     private boolean visited;
-    private boolean obstacle;
 
     private final int xCoor;
     private final int yCoor;
 
-    private double GDist;
-    private double HDist;
+    private double GCost;
+    private double HCost;
     private double FCost;
 
+    /**
+     * initializes variables for node
+     *
+     * @param xCoor - X coordinate of node
+     * @param yCoor - Y coordinate of node
+     * @param HCost - Heuristic cost from node to the destination node
+     */
+    public AStarNode(int xCoor, int yCoor, double HCost) {
+        this.prev = null;
+        this.xCoor = xCoor;
+        this.yCoor = yCoor;
 
+        this.visited = false;
+        this.HCost = HCost;
+        this.GCost = this.FCost = Double.MAX_VALUE;
+    }
+
+    //-------------------------- Bunch of setters and getters below
     public int getxCoor() {
         return xCoor;
     }
@@ -22,14 +41,8 @@ public class AStarNode {
         return yCoor;
     }
 
-    public AStarNode(int xCoor, int yCoor, double HDist) {
-        this.prev = null;
-        this.xCoor = xCoor;
-        this.yCoor = yCoor;
-
-        this.visited = false;
-        this.HDist = HDist;
-        this.GDist = this.FCost = Double.MAX_VALUE;
+    public boolean isVisited() {
+        return visited;
     }
 
     public AStarNode getPrev() {
@@ -40,28 +53,24 @@ public class AStarNode {
         this.prev = prev;
     }
 
-    public boolean isVisited() {
-        return visited;
-    }
-
     public void setVisited(boolean visited) {
         this.visited = visited;
     }
 
-    public double getGDist() {
-        return GDist;
+    public double getGCost() {
+        return GCost;
     }
 
-    public void setGDist(double GDist) {
-        this.GDist = GDist;
+    public void setGCost(double GCost) {
+        this.GCost = GCost;
     }
 
-    public double getHDist() {
-        return HDist;
+    public double getHCost() {
+        return HCost;
     }
 
-    public void setHDist(double HDist) {
-        this.HDist = HDist;
+    public void setHCost(double HCost) {
+        this.HCost = HCost;
     }
 
     public double getFCost() {
@@ -72,12 +81,4 @@ public class AStarNode {
         this.FCost = FCost;
     }
 
-
-    public void setObstacle() {
-        this.obstacle = true;
-    }
-
-    public boolean isObstacle() {
-        return obstacle;
-    }
 }

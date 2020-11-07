@@ -1,23 +1,37 @@
 package model;
 
+/**
+ * Class representation of node used for all path algorithms except AStar
+ */
 public class Node {
     private Node prev;
 
     private boolean visited;
-    private boolean isObstacle;
 
     private final int xCoor;
     private final int yCoor;
     private double dist;
 
+    /**
+     * initializes variables for node
+     *
+     * @param xCoor - X coordinate of node
+     * @param yCoor - Y coordinate of node
+     */
     public Node(int xCoor, int yCoor) {
         this.prev = null;
 
-        this.visited = false;
         this.dist = Double.MAX_VALUE;
         this.xCoor = xCoor;
         this.yCoor = yCoor;
     }
+
+    // method checks if a node is visited or not
+    public boolean isVisited() {
+        return visited;
+    }
+
+    //-------------------------- Bunch of setters and getters below
 
     public void setPrev(Node prev) {
         this.prev = prev;
@@ -35,10 +49,6 @@ public class Node {
         return prev;
     }
 
-    public boolean isVisited() {
-        return visited;
-    }
-
     public double getDist() {
         return dist;
     }
@@ -51,11 +61,4 @@ public class Node {
         return yCoor;
     }
 
-    public void setObstacle() {
-        this.isObstacle = true;
-    }
-
-    public boolean isObstacle() {
-        return isObstacle;
-    }
 }

@@ -8,14 +8,19 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-
+/**
+ * Class representation of screen containing methods for painting various tiles
+ * and the grid
+ */
 public class Screen extends Canvas{
     private final int WIDTH;
     private final int HEIGHT;
 
-    private ArrayList<Point> obstacles;
     private GraphicsContext gc;
 
+    /**
+     * constructor
+     */
     public Screen() {
         WIDTH = 300;
         HEIGHT = 300;
@@ -24,10 +29,13 @@ public class Screen extends Canvas{
         setHeight(HEIGHT);
 
         gc = getGraphicsContext2D();
-        obstacles = new ArrayList<Point>();
 
     }
 
+    /**
+     * method paints tiles that have been visited
+     * @param list - list of visited tiles
+     */
     public void drawVisited(ArrayList<Point> list) {
         if(list.size() < 1) return;
         gc.setFill(Color.CORAL);
@@ -37,21 +45,32 @@ public class Screen extends Canvas{
 
     }
 
-    public void drawWall(ArrayList<Point> list) {
-
+    /**
+     * method draws obstacles
+     * @param obstacles - array with obstacles
+     */
+    public void drawObs(boolean[][] obstacles) {
         gc.setFill(Color.BLACK);
 
-        for(Point p : list) {
-            gc.fillRect(p.x * 10, p.y * 10, 10, 10);
-            obstacles.add(new Point(p.x, p.y));
+        for(int x = 0; x < WIDTH / 10; x++) {
+            for(int y = 0; y < HEIGHT / 10; y++) {
+                if(obstacles[x][y]) gc.fillRect(x * 10, y * 10, 10, 10);
+            }
         }
     }
 
+    /**
+     * method draws given tile
+     * @param point
+     */
     public void drawPoint(Point point) {
         gc.setFill(Color.LIMEGREEN);
         gc.fillRect(point.x * 10, point.y * 10, 10, 10);
     }
 
+    /**
+     * method paints grid
+     */
     public void drawGrid() {
         gc.setStroke(Color.BLACK);
 
@@ -64,6 +83,10 @@ public class Screen extends Canvas{
 
     }
 
+    /**
+     * method for draw path from start to destination
+     * @param list - the path given as a list
+     */
     public void drawPath(LinkedList<Point> list) {
 
         gc.setFill(Color.BLUEVIOLET);
@@ -77,9 +100,6 @@ public class Screen extends Canvas{
         gc.clearRect(0, 0, WIDTH, HEIGHT);
     }
 
-    public ArrayList<Point> getObstacles() {
-        return obstacles;
-    }
 
     public GraphicsContext getGc() {
         return gc;

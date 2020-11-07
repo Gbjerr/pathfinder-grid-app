@@ -4,6 +4,9 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+/**
+ * Class representation of dijkstra path algorithm in a tile system
+ */
 public class Dijkstra implements Algorithm{
 
     private final int MAX_X_COOR;
@@ -11,40 +14,50 @@ public class Dijkstra implements Algorithm{
 
     private ArrayList<Point> visited;
 
-    private Node[][] table;
+    private Graph graph;
+
+    private Node[][] tileTable;
     private Node startNode;
     private Node endNode;
     private Node current;
 
-
+    /**
+     *
+     * constructor initializes necessary variables and structures for the algorithm
+     *
+     * @param startPoint - the start point
+     * @param endPoint - the destination point
+     * @param graph - the graph
+     */
     public Dijkstra(Point startPoint, Point endPoint, Graph graph) {
 
         this.MAX_X_COOR = graph.getWIDTH();
         this.MAX_Y_COOR = graph.getHEIGHT();
 
-        table = new Node[MAX_X_COOR][MAX_Y_COOR];
-        visited = new ArrayList<Point>();
+        this.tileTable = new Node[MAX_X_COOR][MAX_Y_COOR];
+        this.graph = graph;
+        this.visited = new ArrayList<Point>();
 
-        // initalize table of nodes
+        // initalize tileTable of nodes
         for (int i = 0; i < MAX_X_COOR; i++) {
 
             for (int j = 0; j < MAX_Y_COOR; j++) {
-                table[i][j] = new Node(i, j);
+                tileTable[i][j] = new Node(i, j);
 
             }
         }
 
-        setObstacles(graph.getObstacles());
-
-        startNode = table[startPoint.x][startPoint.y];
+        startNode = tileTable[startPoint.x][startPoint.y];
         startNode.setDist(0);
         current = startNode;
 
-        endNode = table[endPoint.x][endPoint.y];
-
-
+        endNode = tileTable[endPoint.x][endPoint.y];
     }
 
+    /**
+     * method returns the path from end node to start node
+     * @return - a linked list containing the path from end node to start node
+     */
     @Override
     public LinkedList<Point> getPath() {
         System.out.println("length of path is " + endNode.getDist());
@@ -59,90 +72,108 @@ public class Dijkstra implements Algorithm{
         }
 
         return list;
-
     }
 
+    /**
+     * method returns the minimum cost tile based on its distance
+     * @return - the current minimum cost node
+     */
     private Node getMinDistReachable() {
         double min = Integer.MAX_VALUE;
         Node minNode = null;
 
-        for(int x = 0; x < MAX_X_COOR; x++) {
+        // go through visited nodes and their neighbors to find the tile which has shortest distance from the start tile
+        for(int index = 0; index < visited.size(); index++) {
+            Point p = visited.get(index);
 
-            for(int y = 0; y < MAX_Y_COOR; y++) {
-
-                if(table[x][y].getDist() < min && !table[x][y].isVisited()) {
-                    min = table[x][y].getDist();
-                    minNode = table[x][y];
+            LinkedList<Point> neighbors = graph.getAdjLists()[p.x][p.y];
+            int amtVisited = 0;
+            for(Point neighbor : neighbors) {
+                if(tileTable[neighbor.x][neighbor.y].isVisited()) {
+                    amtVisited++;
+                    continue;
                 }
+
+                // update the min node if current min is greater than the distance from start to current node
+                if(tileTable[neighbor.x][neighbor.y].getDist() < min) {
+                    min = tileTable[neighbor.x][neighbor.y].getDist();
+                    minNode = tileTable[neighbor.x][neighbor.y];
+                }
+            }
+
+            // when all neigbors are visited for a node, we don't have to go through that node again thus delete it
+            if(amtVisited == neighbors.size()) {
+                visited.remove(index);
+                index--;
             }
         }
 
         return minNode;
     }
 
+    /**
+     * visits given node and its distance to other neighbors
+     * @param node - the current node to explore
+     */
     private void visit(Node node) {
 
-        double min = Double.MAX_VALUE;
-        Node minNode = null;
-
-        //checks the distance to the eight surrounding nodes in a grid
-
-        for(int x = node.getxCoor() - 1; x < node.getxCoor() + 2; x++) {
-
-            for(int y = node.getyCoor() - 1; y < node.getyCoor() + 2; y++) {
-
-                if(x == node.getxCoor() && y == node.getyCoor()) continue;
-                if(x < 0 || !(x < MAX_X_COOR) || y < 0 || !(y < MAX_Y_COOR)
-                        || table[x][y].isObstacle() || table[x][y].isVisited()) continue;
-
-                int xTemp = node.getxCoor() - x, yTemp = node.getyCoor() - y;
-                double temp;
-                if((xTemp + yTemp) % 2 == 0) {
-                    temp = 1.4;
-                }
-                else {
-                    temp = 1.0;
-                }
-
-                if(temp + node.getDist() < table[x][y].getDist()) {
-                    table[x][y].setDist(temp + node.getDist());
-                    table[x][y].setPrev(node);
-                }
-
-                if(temp < min) {
-                    min = temp;
-                    minNode = table[x][y];
-                }
-
+        // explore the distances from current node to all unvisited neighbors
+        for(Point p : graph.getAdjLists()[node.getxCoor()][node.getyCoor()]) {
+            if(tileTable[p.x][p.y].isVisited()) {
+                continue;
             }
+
+            int xTemp = node.getxCoor() - p.x, yTemp = node.getyCoor() - p.y;
+            double temp;
+            if((xTemp + yTemp) % 2 == 0) {
+                temp = 1.4;
+            }
+            else {
+                temp = 1.0;
+            }
+
+            if(temp + node.getDist() < tileTable[p.x][p.y].getDist()) {
+                tileTable[p.x][p.y].setDist(temp + node.getDist());
+                tileTable[p.x][p.y].setPrev(node);
+            }
+
         }
 
         node.setVisited(true);
         visited.add(new Point(node.getxCoor(), node.getyCoor()));
     }
 
-    public void setObstacles(ArrayList<Point> list) {
-        for(Point p : list) {
-            table[p.x][p.y].setObstacle();
-        }
-    }
-
+    /**
+     * method visits current node, and then sets current node to the minimum cost one
+     */
     @Override
     public void visitNext() {
         visit(current);
         current = getMinDistReachable();
     }
 
+    /**
+     * getter for the start coordinate
+     * @return - coordinate of start node
+     */
     @Override
     public Point getStartCoor() {
         return new Point(startNode.getxCoor(), startNode.getyCoor());
     }
 
+    /**
+     * getter for all visited tiles
+     * @return - a list of all visited tiles
+     */
     @Override
     public ArrayList<Point> getVisited() {
         return visited;
     }
 
+    /**
+     * returns a boolean showing if destination node is reached or not
+     * @return - boolean value whether destination node is visited
+     */
     @Override
     public boolean endNodeIsVisited() {
         return endNode.isVisited();

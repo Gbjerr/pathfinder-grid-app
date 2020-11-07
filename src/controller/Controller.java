@@ -6,9 +6,15 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import model.*;
-import view.*;
+import view.View;
+import view.Screen;
 
 import java.awt.Point;
+
+/**
+ * Controller class which decides what appears on the screen based on key listener actions, and decides
+ * which algorithm to activate
+ */
 
 public class Controller implements Runnable{
 
@@ -26,9 +32,14 @@ public class Controller implements Runnable{
 
     }
 
+    /**
+     * method initiates a bunch of listeners and how the program should react to things
+     */
     private void initListeners() {
 
         Screen screen = view.getScreen();
+
+        // key listener for the "Get shortest path" button
         view.getStartButton().setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -39,7 +50,9 @@ public class Controller implements Runnable{
                 screen.setClear();
 
                 screen.drawGrid();
-                screen.drawWall(graph.getObstacles());
+                screen.drawObs(graph.getObstacles());
+                graph.initAdjList();
+
                 int[] startCoor = getNums(view.getStartCoorField().getText());
                 int[] endCoor = getNums(view.getEndCoorField().getText());
                 Point startPoint = new Point(startCoor[0], startCoor[1]);
@@ -49,7 +62,7 @@ public class Controller implements Runnable{
                     alg = new Dijkstra(startPoint, endPoint, graph);
                 }
                 else if(view.getAlgoMenu().getValue().equals("A* algorithm")){
-                    alg = new AStar(startPoint, endPoint, graph);
+                    alg = new AStar(startCoor[0], startCoor[1], endCoor[0], endCoor[1], graph);
                 }
                 else if(view.getAlgoMenu().getValue().equals("Depth First Search")){
                     alg = new DepthFirstSearch(startPoint, endPoint, graph);
@@ -61,6 +74,7 @@ public class Controller implements Runnable{
             }
         });
 
+        // key listener for the "Clear" button
         view.getClearButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -70,6 +84,7 @@ public class Controller implements Runnable{
             }
         });
 
+        // listener for when mouse is dragged on the tiles to set up obstacles
         screen.setOnMouseDragged(new EventHandler<MouseEvent>() {
 
             @Override
@@ -83,12 +98,16 @@ public class Controller implements Runnable{
                     screen.getGc().setFill(Color.BLACK);
                     screen.getGc().fillRect(x * 10, y * 10, 10, 10);
                 }
-
             }
         });
 
     }
 
+    /**
+     * string processing
+     * @param text
+     * @return
+     */
     private int[] getNums(String text) {
         int[] res = new int[2];
         int index = 0;
@@ -112,11 +131,17 @@ public class Controller implements Runnable{
         return res;
     }
 
+    /**
+     * starts thread and runs the chosen path algorithm
+     */
     private void runAlgorithm() {
         thread = new Thread(this, "Path algorithm thread");
         thread.start();
     }
 
+    /**
+     * method is run when a path algorithm is selected from a chosen point to a destination point
+     */
     @Override
     public void run() {
 

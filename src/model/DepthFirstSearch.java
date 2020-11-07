@@ -1,107 +1,133 @@
 package model;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+/**
+ * Class representation of DFS path algorithm in a grid system
+ */
 public class DepthFirstSearch implements Algorithm{
     private final int MAX_X_COOR;
     private final int MAX_Y_COOR;
 
     private LinkedList<Node> stack;
+    private Graph graph;
     private ArrayList<Point> visited;
 
-    private Node[][] table;
+    private Node[][] tileTable;
     private Node startNode;
     private Node endNode;
     private Node current;
 
+    /**
+     *
+     * constructor initializes necessary variables and structures for the algorithm
+     *
+     * @param startPoint - the start point
+     * @param endPoint - the destination point
+     * @param graph - the graph
+     */
     public DepthFirstSearch(Point startPoint, Point endPoint, Graph graph) {
 
         this.MAX_X_COOR = graph.getWIDTH();
         this.MAX_Y_COOR = graph.getHEIGHT();
 
-        table = new Node[MAX_X_COOR][MAX_Y_COOR];
-        visited = new ArrayList<Point>();
-        stack = new LinkedList<Node>();
+        this.tileTable = new Node[MAX_X_COOR][MAX_Y_COOR];
+        this.visited = new ArrayList<Point>();
+        this.stack = new LinkedList<Node>();
+        this.graph = graph;
 
-        // initalize table of nodes
+        // initalize tileTable of nodes
         for (int i = 0; i < MAX_X_COOR; i++) {
 
             for (int j = 0; j < MAX_Y_COOR; j++) {
-                table[i][j] = new Node(i, j);
+                tileTable[i][j] = new Node(i, j);
 
             }
         }
 
-        setObstacles(graph.getObstacles());
-
-        startNode = table[startPoint.x][startPoint.y];
+        startNode = tileTable[startPoint.x][startPoint.y];
         startNode.setDist(0);
         stack.push(startNode);
         current = startNode;
 
-        endNode = table[endPoint.x][endPoint.y];
+        endNode = tileTable[endPoint.x][endPoint.y];
 
     }
+
+    /**
+     * method visits current node, and then sets current node to whatever is on top of the stack
+     */
     @Override
     public void visitNext() {
         Node node = stack.pop();
         visit(node);
     }
 
+    /**
+     * visits given node and explores the distances to tiles around it
+     * @param node - the current node to explore
+     */
     private void visit(Node node) {
 
-
-        for(int x = node.getxCoor() - 1; x < node.getxCoor() + 2; x++) {
-
-            for(int y = node.getyCoor() - 1; y < node.getyCoor() + 2; y++) {
-
-                if(x == node.getxCoor() && y == node.getyCoor()) continue;
-                if(x < 0 || !(x < MAX_X_COOR) || y < 0 || !(y < MAX_Y_COOR)
-                        || table[x][y].isObstacle() || table[x][y].isVisited()) continue;
-
-                int xTemp = node.getxCoor() - x, yTemp = node.getyCoor() - y;
-                double temp;
-                if((xTemp + yTemp) % 2 == 0) {
-                    temp = 1.4;
-                }
-                else {
-                    temp = 1.0;
-                }
-
-                table[x][y].setDist(temp + node.getDist());
-                table[x][y].setPrev(node);
-                stack.push(table[x][y]);
-
+        // explore the distances from current node to all unvisited neighbors
+        for(Point p : graph.getAdjLists()[node.getxCoor()][node.getyCoor()]) {
+            if(tileTable[p.x][p.y].isVisited()) {
+                continue;
             }
+
+            int xTemp = node.getxCoor() - p.x, yTemp = node.getyCoor() - p.y;
+            double temp;
+            if((xTemp + yTemp) % 2 == 0) {
+                temp = 1.4;
+            }
+            else {
+                temp = 1.0;
+            }
+
+            tileTable[p.x][p.y].setDist(temp + node.getDist());
+            tileTable[p.x][p.y].setPrev(node);
+            tileTable[p.x][p.y].setVisited(true);
+            stack.push(new Node(p.x, p.y));
+
         }
 
         node.setVisited(true);
         visited.add(new Point(node.getxCoor(), node.getyCoor()));
+
     }
 
-    public void setObstacles(ArrayList<Point> list) {
-        for(Point p : list) {
-            table[p.x][p.y].setObstacle();
-        }
-    }
-
+    /**
+     * getter for the start coordinate
+     * @return - coordinate of start node
+     */
     public Point getStartCoor() {
         return new Point(startNode.getxCoor(), startNode.getyCoor());
     }
 
+    /**
+     * getter for all visited tiles
+     * @return - a list of all visited tiles
+     */
     @Override
     public ArrayList<Point> getVisited() {
         return visited;
     }
 
+    /**
+     * returns a boolean showing if destination node is reached or not
+     * @return - boolean value whether destination node is visited
+     */
     @Override
     public boolean endNodeIsVisited() {
         return endNode.isVisited();
     }
 
-
+    /**
+     * method returns the path from end node to start node
+     * @return - a linked list containing the path from end node to start node
+     */
     @Override
     public LinkedList<Point> getPath() {
         System.out.println("length of path is " + endNode.getDist());
