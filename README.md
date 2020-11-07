@@ -5,19 +5,36 @@ drawn by draggin the mouse on the tiles.
 
 Has structure:
 Src
+
 ├── controller
+
 │   └── Controller.java
+
 ├── model
+
 │   ├── AStar.java
+
 │   ├── AStarNode.java
+
 │   ├── Algorithm.java
+
 │   ├── BreadthFirstSearch.java
+
 │   ├── DepthFirstSearch.java
+
 │   ├── Dijkstra.java
+
 │   ├── Graph.java
+
 │   └── Node.java
+
 ├── startup
+
 │   └── Main.java
+
 └── view
+
     ├── Screen.java
+    
     └── View.java
+    
