@@ -3,6 +3,8 @@ JavaFX program, for visualizing path finding in a grid system. The program finds
 given its coordinates as input with a path algorithm which the user chooses in the drop-down menu. Obstacles can be
 drawn by draggin the mouse on the tiles.
 
+<img height="460" width="329" alt="path" src="https://user-images.githubusercontent.com/46920882/98447188-16802180-2123-11eb-8cfc-24e2058cfdde.PNG">
+
 ## Structure
 ```bash
 Src
