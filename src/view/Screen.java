@@ -22,13 +22,16 @@ public class Screen extends Canvas{
      * constructor
      */
     public Screen() {
-        WIDTH = 300;
-        HEIGHT = 300;
+        WIDTH = 450;
+        HEIGHT = 450;
 
         setWidth(WIDTH);
         setHeight(HEIGHT);
 
         gc = getGraphicsContext2D();
+
+        gc.setFill(Color.web("C0C0C0"));
+        gc.fillRect(0, 0, WIDTH, HEIGHT);
 
     }
 
@@ -38,9 +41,9 @@ public class Screen extends Canvas{
      */
     public void drawVisited(ArrayList<Point> list) {
         if(list.size() < 1) return;
-        gc.setFill(Color.CORAL);
+        gc.setFill(Color.web("768FD4"));
         for(int i = 0; i < list.size(); i++) {
-            gc.fillRect(list.get(i).x * 10, list.get(i).y * 10, 10, 10);
+            gc.fillRect(list.get(i).x * 15, list.get(i).y * 15, 15, 15);
         }
 
     }
@@ -50,11 +53,11 @@ public class Screen extends Canvas{
      * @param obstacles - array with obstacles
      */
     public void drawObs(boolean[][] obstacles) {
-        gc.setFill(Color.BLACK);
+        gc.setFill(Color.web("393A3D"));
 
-        for(int x = 0; x < WIDTH / 10; x++) {
-            for(int y = 0; y < HEIGHT / 10; y++) {
-                if(obstacles[x][y]) gc.fillRect(x * 10, y * 10, 10, 10);
+        for(int x = 0; x < WIDTH / 15; x++) {
+            for(int y = 0; y < HEIGHT / 15; y++) {
+                if(obstacles[x][y]) gc.fillRect(x * 15, y * 15, 15, 15);
             }
         }
     }
@@ -65,14 +68,14 @@ public class Screen extends Canvas{
      */
     public void drawPoint(Point point) {
         gc.setFill(Color.LIMEGREEN);
-        gc.fillRect(point.x * 10, point.y * 10, 10, 10);
+        gc.fillRect(point.x * 15, point.y * 15, 15, 15);
     }
 
     /**
      * method paints grid
      */
     public void drawGrid() {
-        gc.setStroke(Color.BLACK);
+        gc.setStroke(Color.WHITE);
 
         for(int i = 0; i < HEIGHT; i += HEIGHT / 30) {
             gc.strokeLine(0, i, WIDTH, i);
@@ -89,15 +92,18 @@ public class Screen extends Canvas{
      */
     public void drawPath(LinkedList<Point> list) {
 
-        gc.setFill(Color.BLUEVIOLET);
+        gc.setFill(Color.web("DE6E2E"));
         for(Point p : list) {
 
-            gc.fillRect(p.x * 10, p.y * 10, 10, 10);
+            gc.fillRect(p.x * 15, p.y * 15, 15, 15);
         }
     }
 
     public void setClear() {
+
         gc.clearRect(0, 0, WIDTH, HEIGHT);
+        drawBackground();
+        drawGrid();
     }
 
 
@@ -105,4 +111,8 @@ public class Screen extends Canvas{
         return gc;
     }
 
+    public void drawBackground() {
+        gc.setFill(Color.web("C0C0C0"));
+        gc.fillRect(0, 0, WIDTH, HEIGHT);
+    }
 }

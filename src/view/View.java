@@ -23,19 +23,22 @@ public class View extends Pane {
      * constructor initializes all visual modules
      */
     public View() {
-        setPrefSize(300, 430);
+        setPrefSize(650, 450);
 
-        startCoorField = new TextField();
-        endCoorField = new TextField();
+        startCoorField = new TextField("(0, 0)");
+        endCoorField = new TextField("(29, 29)");
 
         algoMenu = new ComboBox();
         algoMenu.getItems().add("Dijkstra's algorithm");
         algoMenu.getItems().add("A* algorithm");
         algoMenu.getItems().add("Depth First Search");
         algoMenu.getItems().add("Breadth First Search");
+        algoMenu.setValue("Dijkstra's algorithm");
 
-        startButton = new Button("Get Shortest path");
+        startButton = new Button("Visualize Path");
+        startButton.setPrefSize(150, 40);
         clearButton = new Button("Clear");
+        clearButton.setPrefSize(90, 30);
 
         screen = new Screen();
         initContent();
@@ -46,22 +49,22 @@ public class View extends Pane {
      */
     public void initContent() {
 
-        startCoorField.setLayoutY(40);
-        startCoorField.setLayoutX(70);
+        startCoorField.setLayoutY(120);
+        startCoorField.setLayoutX(30);
 
-        endCoorField.setLayoutY(70);
-        endCoorField.setLayoutX(70);
+        endCoorField.setLayoutY(170);
+        endCoorField.setLayoutX(30);
 
-        screen.setLayoutY(130);
+        screen.setLayoutX(200);
 
-        algoMenu.setLayoutY(100);
-        algoMenu.setLayoutX(70);
+        algoMenu.setLayoutY(240);
+        algoMenu.setLayoutX(30);
 
-        startButton.setLayoutX(90);
-        startButton.setLayoutY(10);
+        startButton.setLayoutY(50);
+        startButton.setLayoutX(30);
 
-        clearButton.setLayoutY(100);
-        clearButton.setLayoutX(240);
+        clearButton.setLayoutY(290);
+        clearButton.setLayoutX(30);
 
         screen.drawGrid();
 
