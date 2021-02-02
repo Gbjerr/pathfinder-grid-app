@@ -53,8 +53,8 @@ public class AStarNode {
         this.prev = prev;
     }
 
-    public void setVisited(boolean visited) {
-        this.visited = visited;
+    public void setVisited() {
+        this.visited = true;
     }
 
     public double getGCost() {

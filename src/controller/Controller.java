@@ -4,16 +4,17 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import model.*;
 import view.View;
 import view.Screen;
 
 import java.awt.Point;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Controller class which decides what appears on the screen based on key listener actions, and decides
- * which algorithm to activate
+ * which path algorithm to activate etc.
  */
 
 public class Controller implements Runnable{
@@ -29,6 +30,7 @@ public class Controller implements Runnable{
         this.graph = new Graph();
 
         initListeners();
+
 
     }
 
@@ -48,21 +50,22 @@ public class Controller implements Runnable{
                         view.getEndCoorField().getText() == null) return;
 
                 screen.setClear();
-
                 screen.drawGrid();
                 screen.drawObs(graph.getObstacles());
                 graph.initAdjList();
 
-                int[] startCoor = getNums(view.getStartCoorField().getText());
-                int[] endCoor = getNums(view.getEndCoorField().getText());
-                Point startPoint = new Point(startCoor[0], startCoor[1]);
-                Point endPoint = new Point(endCoor[0], endCoor[1]);
+                Point startPoint = extractPoint(view.getStartCoorField().getText());
+                Point endPoint = extractPoint(view.getEndCoorField().getText());
+                if(startPoint == null || endPoint == null) {
+                    System.out.println("Enter the coordinate fields on the format (x, y)");
+                    return;
+                }
 
                 if(view.getAlgoMenu().getValue().equals("Dijkstra's algorithm")) {
                     alg = new Dijkstra(startPoint, endPoint, graph);
                 }
                 else if(view.getAlgoMenu().getValue().equals("A* algorithm")){
-                    alg = new AStar(startCoor[0], startCoor[1], endCoor[0], endCoor[1], graph);
+                    alg = new AStar(startPoint, endPoint, graph);
                 }
                 else if(view.getAlgoMenu().getValue().equals("Depth First Search")){
                     alg = new DepthFirstSearch(startPoint, endPoint, graph);
@@ -80,7 +83,6 @@ public class Controller implements Runnable{
             public void handle(ActionEvent actionEvent) {
                 graph.reset();
                 screen.setClear();
-                screen.drawGrid();
             }
         });
 
@@ -89,14 +91,14 @@ public class Controller implements Runnable{
 
             @Override
             public void handle(MouseEvent mouseEvent) {
-                double x = (mouseEvent.getX() - (mouseEvent.getX() % 10)) / 10;
-                double y = (mouseEvent.getY() - (mouseEvent.getY()) % 10) / 10;
+                double x = (mouseEvent.getX() - (mouseEvent.getX() % 15)) / 15;
+                double y = (mouseEvent.getY() - (mouseEvent.getY()) % 15) / 15;
 
                 if(x < graph.getWIDTH() && y < graph.getHEIGHT() && x >= 0 && y >= 0) {
                     graph.setObstacle(x, y);
 
-                    screen.getGc().setFill(Color.BLACK);
-                    screen.getGc().fillRect(x * 10, y * 10, 10, 10);
+                    screen.drawObs(graph.getObstacles());
+                    screen.drawGrid();
                 }
             }
         });
@@ -104,31 +106,42 @@ public class Controller implements Runnable{
     }
 
     /**
-     * string processing
+     * Extracts the x and y position of a string on format "(x, y)"
      * @param text
      * @return
      */
-    private int[] getNums(String text) {
-        int[] res = new int[2];
-        int index = 0;
-        for(int i = 0; i < text.length(); i++) {
-            if(index >= res.length) break;
+    private Point extractPoint(String text) {
+
+        Pattern pattern = Pattern.compile("^\\(\\d+\\,( \\d+|\\d+)\\)$");
+        Matcher matcher = pattern.matcher(text);
+        if(!matcher.matches()) return null;
+
+        Point point = new Point();
+
+        for(int i = 1; i < text.length(); i++) {
 
             char ch = text.charAt(i);
             if(Character.isDigit(ch)) {
-                if(Character.isDigit(text.charAt(i + 1))) {
-                    res[index] = Integer.parseInt(text.substring(i, i + 2));
-                    index++;
-                    i++;
-                    continue;
+
+                for(int j = i; j < text.length(); j++) {
+
+                    if (!Character.isDigit(text.charAt(j + 1))) {
+                        int number = Integer.parseInt(text.substring(i, j + 1));
+
+                        if(i == 1) {
+                            point.x = number;
+                        } else {
+                            point.y = number;
+                        }
+                        i = j;
+                        break;
+                    }
                 }
 
-                res[index] = Character.getNumericValue(ch);
-                index++;
             }
         }
 
-        return res;
+        return point;
     }
 
     /**
@@ -153,8 +166,8 @@ public class Controller implements Runnable{
 
             Platform.runLater(() -> {
                 screen.drawVisited(alg.getVisited());
-                screen.drawGrid();
                 screen.drawPoint(new Point(alg.getStartCoor().x, alg.getStartCoor().y));
+                screen.drawGrid();
             });
 
 
@@ -167,6 +180,7 @@ public class Controller implements Runnable{
         }
 
         screen.drawPath(alg.getPath());
+        screen.drawGrid();
 
     }
 }

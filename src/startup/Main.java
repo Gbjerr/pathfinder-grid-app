@@ -16,8 +16,9 @@ public class Main extends Application {
         Scene scene = new Scene(view);
 
         new Controller(view);
+        scene.getStylesheets().add("startup/styles.css");
 
-        primaryStage.setTitle("Shortest path simulator");
+        primaryStage.setTitle("Path finder");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();

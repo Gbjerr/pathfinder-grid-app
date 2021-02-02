@@ -88,12 +88,12 @@ public class BreadthFirstSearch implements Algorithm{
 
             tileTable[p.x][p.y].setDist(temp + node.getDist());
             tileTable[p.x][p.y].setPrev(node);
-            tileTable[p.x][p.y].setVisited(true);
+            tileTable[p.x][p.y].setVisited();
             queue.add(new Point(p.x, p.y));
 
         }
 
-        node.setVisited(true);
+        node.setVisited();
         visited.add(new Point(node.getxCoor(), node.getyCoor()));
     }
 

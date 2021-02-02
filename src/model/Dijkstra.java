@@ -139,7 +139,7 @@ public class Dijkstra implements Algorithm{
 
         }
 
-        node.setVisited(true);
+        node.setVisited();
         visited.add(new Point(node.getxCoor(), node.getyCoor()));
     }
 

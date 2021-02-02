@@ -88,12 +88,12 @@ public class DepthFirstSearch implements Algorithm{
 
             tileTable[p.x][p.y].setDist(temp + node.getDist());
             tileTable[p.x][p.y].setPrev(node);
-            tileTable[p.x][p.y].setVisited(true);
+            tileTable[p.x][p.y].setVisited();
             stack.push(new Node(p.x, p.y));
 
         }
 
-        node.setVisited(true);
+        node.setVisited();
         visited.add(new Point(node.getxCoor(), node.getyCoor()));
 
     }

@@ -40,9 +40,7 @@ public class Graph {
                     for(int j = y - 1; j < y + 2; j++) {
 
                         // if coordinate (i, j) is out of bounds, equal to (x, y) or if its an obstacle then skip
-                        if(isOutOfBounds(i, j) || (i == x && j == y) || obstacles[i][j]) {
-                            continue;
-                        }
+                        if(isOutOfBounds(i, j) || (i == x && j == y) || obstacles[i][j]) continue;
 
                         adj[x][y].push(new Point(i, j));
                     }
@@ -68,7 +66,7 @@ public class Graph {
      *
      * @param x - x coordinate
      * @param y - y coordinate
-     * @return - boolean whether the coordinate is out of bounds or not
+     * @return - returns whether the coordinate is out of bounds or not
      */
     private boolean isOutOfBounds(int x, int y) {
         return (x < 0) || !(x < adj[0].length) ||

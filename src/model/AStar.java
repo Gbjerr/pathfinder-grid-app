@@ -25,42 +25,41 @@ public class AStar implements Algorithm{
     /**
      * constructor initializes necessary variables and structures for the algorithm
      *
-     * @param startTileX - x coordinate for start tile
-     * @param startTileY - y coordinate for start tile
-     * @param endTileX - x coordinate for destination tile
-     * @param endTileY - y coordinate for destination tile
+     * @param startPoint - start coordinate
+     * @param endPoint - end coordinate
      * @param graph - the graph
      */
-    public AStar(int startTileX, int startTileY, int endTileX, int endTileY, Graph graph) {
+    public AStar(Point startPoint, Point endPoint, Graph graph) {
 
         this.MAX_X_COOR = graph.getWIDTH();
         this.MAX_Y_COOR = graph.getHEIGHT();
 
         this.visited = new ArrayList<Point>();
         this.graph = graph;
-        this.tileTable = new AStarNode[MAX_X_COOR][MAX_Y_COOR];
+        this.tileTable = new AStarNode[MAX_X_COOR][MAX_Y_COOR];;
 
-        // initalize tiles
+        // initalize tiles and set their heuristic cost
         for (int x = 0; x < MAX_X_COOR; x++) {
 
             for (int y = 0; y < MAX_Y_COOR; y++) {
 
-                double HDist = Math.sqrt(Math.pow(endTileX - x, 2) + Math.pow(endTileY - y, 2));
+                double HDist = Math.sqrt(Math.pow(endPoint.x - x, 2) + Math.pow(endPoint.y - y, 2));
                 tileTable[x][y] = new AStarNode(x, y, HDist);
 
             }
         }
 
-        this.startNode = tileTable[startTileX][startTileY];
+        this.startNode = tileTable[startPoint.x][startPoint.y];
         this.startNode.setGCost(0);
-        this.endNode = tileTable[endTileX][endTileY];
+        this.endNode = tileTable[endPoint.x][endPoint.y];
 
         this.currentNode = startNode;
+
 
     }
 
     /**
-     * method returns the minimum cost tile based on its F value
+     * Method returns the minimum cost tile based on its F value
      * @return - the current minimum cost node
      */
     private AStarNode getMinDistReachable() {
@@ -88,7 +87,7 @@ public class AStar implements Algorithm{
                 }
             }
 
-            // when all neighbors are visited for a node, we don't have to go through that node again thus delete it
+            // when all neighbors are visited for a node, we don't have to go through that node again, thus delete it
             if (amtVisited == neighbors.size()) {
                 visited.remove(index);
                 index--;
@@ -106,9 +105,7 @@ public class AStar implements Algorithm{
 
         // explore the distances from current node to all unvisited neighbors
         for(Point p : graph.getAdjLists()[node.getxCoor()][node.getyCoor()]) {
-            if(tileTable[p.x][p.y].isVisited()) {
-                continue;
-            }
+            if(tileTable[p.x][p.y].isVisited()) continue;
 
             int xTemp = node.getxCoor() - p.x, yTemp = node.getyCoor() - p.y;
             double temp;
@@ -119,6 +116,7 @@ public class AStar implements Algorithm{
                 temp = 1.0;
             }
 
+            // when a better G cost is found for a node, update its G cost and F cost
             if(temp + node.getGCost() < tileTable[p.x][p.y].getGCost()) {
                 tileTable[p.x][p.y].setGCost(temp + node.getGCost());
 
@@ -130,12 +128,12 @@ public class AStar implements Algorithm{
 
         }
 
-        node.setVisited(true);
+        node.setVisited();
         visited.add(new Point(node.getxCoor(), node.getyCoor()));
     }
 
     /**
-     * method returns the path from end node to start node
+     * Method returns the path from end node to start node
      * @return - a linked list containing the path from end node to start node
      */
     @Override

@@ -37,8 +37,8 @@ public class Node {
         this.prev = prev;
     }
 
-    public void setVisited(Boolean visited) {
-        this.visited = visited;
+    public void setVisited() {
+        this.visited = true;
     }
 
     public void setDist(double dist) {
