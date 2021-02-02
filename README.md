@@ -2,7 +2,11 @@
 JavaFX program for visualizing path finding in a grid system. The program finds the path from start to destination
 given its coordinates as input with a chosen path algorithm. The algorithm is chosen by selection in the drop-down menu and obstacles can be drawn by dragging the mouse on the tiles.
 
-<img height="460" width="329" alt="path" src="https://user-images.githubusercontent.com/46920882/98447188-16802180-2123-11eb-8cfc-24e2058cfdde.PNG">
+## Usage
+To run the application, execute the .jar file. Or simply run the main class (startup/Main.java).
+
+## Screenshot
+<img width="487" alt="pic" src="https://user-images.githubusercontent.com/46920882/106622935-6597f000-6574-11eb-85cc-1d33c5bf8251.PNG">
 
 ## Structure
 ```bash
