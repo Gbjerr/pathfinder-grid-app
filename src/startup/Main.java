@@ -16,7 +16,6 @@ public class Main extends Application {
         Scene scene = new Scene(view);
 
         new Controller(view);
-        scene.getStylesheets().add("startup/styles.css");
 
         primaryStage.setTitle("Path finder");
         primaryStage.setScene(scene);

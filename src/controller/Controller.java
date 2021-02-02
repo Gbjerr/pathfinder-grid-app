@@ -1,6 +1,7 @@
 package controller;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -17,13 +18,13 @@ import java.util.regex.Pattern;
  * which path algorithm to activate etc.
  */
 
-public class Controller implements Runnable{
-
-    private Thread thread;
+public class Controller {
 
     private View view;
     private Algorithm alg;
     private Graph graph;
+
+    private Task<Void> pathProcedure;
 
     public Controller(View view) {
         this.view = view;
@@ -31,7 +32,44 @@ public class Controller implements Runnable{
 
         initListeners();
 
+    }
 
+    /*
+        initializes the path finding procedure
+    */
+    private void initPathProcedure() {
+        this.pathProcedure = new Task<Void>() {
+
+            @Override
+            protected Void call() throws Exception {
+
+                Screen screen = view.getScreen();
+
+                while(!alg.endNodeIsVisited()) {
+
+                    alg.visitNext();
+
+                    Platform.runLater(() -> {
+                        screen.drawVisited(alg.getVisited());
+                        screen.drawPoint(new Point(alg.getStartCoor().x, alg.getStartCoor().y));
+                        screen.drawGrid();
+                    });
+
+
+                    try {
+                        java.util.concurrent.TimeUnit.MILLISECONDS.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                screen.drawPath(alg.getPath());
+                screen.drawGrid();
+
+                return null;
+            }
+        };
     }
 
     /**
@@ -73,7 +111,9 @@ public class Controller implements Runnable{
                 else {
                     alg = new BreadthFirstSearch(startPoint, endPoint, graph);
                 }
-                runAlgorithm();
+
+                initPathProcedure();
+                new Thread(pathProcedure).start();
             }
         });
 
@@ -144,43 +184,4 @@ public class Controller implements Runnable{
         return point;
     }
 
-    /**
-     * starts thread and runs the chosen path algorithm
-     */
-    private void runAlgorithm() {
-        thread = new Thread(this, "Path algorithm thread");
-        thread.start();
-    }
-
-    /**
-     * method is run when a path algorithm is selected from a chosen point to a destination point
-     */
-    @Override
-    public void run() {
-
-        Screen screen = view.getScreen();
-
-        while(!alg.endNodeIsVisited()) {
-
-            alg.visitNext();
-
-            Platform.runLater(() -> {
-                screen.drawVisited(alg.getVisited());
-                screen.drawPoint(new Point(alg.getStartCoor().x, alg.getStartCoor().y));
-                screen.drawGrid();
-            });
-
-
-            try {
-                java.util.concurrent.TimeUnit.MILLISECONDS.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        screen.drawPath(alg.getPath());
-        screen.drawGrid();
-
-    }
 }
