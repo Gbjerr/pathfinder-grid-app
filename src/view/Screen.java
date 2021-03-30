@@ -1,5 +1,6 @@
 package view;
 
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -29,10 +30,28 @@ public class Screen extends Canvas{
         setHeight(HEIGHT);
 
         gc = getGraphicsContext2D();
+        init();
+    }
 
-        gc.setFill(Color.web("C0C0C0"));
-        gc.fillRect(0, 0, WIDTH, HEIGHT);
+    /**
+     * initializes screen
+     */
+    public void init() {
+        Platform.runLater(() -> {
+            gc.setFill(Color.web("C0C0C0"));
+            gc.fillRect(0, 0, WIDTH, HEIGHT);
+            drawGrid();
+        });
+    }
 
+    public void update(boolean[][] obstacles, ArrayList<Point> visited) {
+        Platform.runLater(() -> {
+            gc.clearRect(0, 0, WIDTH, HEIGHT);
+            drawBackground();
+            drawObs(obstacles);
+            drawVisited(visited);
+            drawGrid();
+        });
     }
 
     /**
@@ -67,8 +86,11 @@ public class Screen extends Canvas{
      * @param point
      */
     public void drawPoint(Point point) {
-        gc.setFill(Color.LIMEGREEN);
-        gc.fillRect(point.x * 15, point.y * 15, 15, 15);
+
+        Platform.runLater(() -> {
+            gc.setFill(Color.LIMEGREEN);
+            gc.fillRect(point.x * 15, point.y * 15, 15, 15);
+        });
     }
 
     /**
@@ -99,11 +121,12 @@ public class Screen extends Canvas{
         }
     }
 
-    public void setClear() {
-
-        gc.clearRect(0, 0, WIDTH, HEIGHT);
-        drawBackground();
-        drawGrid();
+    public void clear() {
+        Platform.runLater(() -> {
+            gc.clearRect(0, 0, WIDTH, HEIGHT);
+            drawBackground();
+            drawGrid();
+        });
     }
 
 

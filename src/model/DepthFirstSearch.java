@@ -18,7 +18,6 @@ public class DepthFirstSearch implements Algorithm{
     private Node[][] tileTable;
     private Node startNode;
     private Node endNode;
-    private Node current;
 
     /**
      *
@@ -50,7 +49,6 @@ public class DepthFirstSearch implements Algorithm{
         startNode = tileTable[startPoint.x][startPoint.y];
         startNode.setDist(0);
         stack.push(startNode);
-        current = startNode;
 
         endNode = tileTable[endPoint.x][endPoint.y];
 
@@ -62,7 +60,7 @@ public class DepthFirstSearch implements Algorithm{
     @Override
     public void visitNext() {
         Node node = stack.pop();
-        visit(node);
+        visit(tileTable[node.getxCoor()][node.getyCoor()]);
     }
 
     /**
@@ -86,14 +84,13 @@ public class DepthFirstSearch implements Algorithm{
                 temp = 1.0;
             }
 
-            tileTable[p.x][p.y].setDist(temp + node.getDist());
+            tileTable[p.x][p.y].setDist(temp + tileTable[p.x][p.y].getDist());
             tileTable[p.x][p.y].setPrev(node);
-            tileTable[p.x][p.y].setVisited();
-            stack.push(new Node(p.x, p.y));
+            stack.push(tileTable[p.x][p.y]);
 
         }
 
-        node.setVisited();
+        tileTable[node.getxCoor()][node.getyCoor()].setVisited();
         visited.add(new Point(node.getxCoor(), node.getyCoor()));
 
     }
@@ -130,7 +127,7 @@ public class DepthFirstSearch implements Algorithm{
      */
     @Override
     public LinkedList<Point> getPath() {
-        System.out.println("length of path is " + endNode.getDist());
+        System.out.println("length of path is " + tileTable[endNode.getxCoor()][endNode.getyCoor()].getDist());
         LinkedList<Point> list = new LinkedList<Point>();
         Node temp = endNode;
 

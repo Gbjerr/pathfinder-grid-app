@@ -49,11 +49,7 @@ public class Controller {
 
                     alg.visitNext();
 
-                    Platform.runLater(() -> {
-                        screen.drawVisited(alg.getVisited());
-                        screen.drawPoint(new Point(alg.getStartCoor().x, alg.getStartCoor().y));
-                        screen.drawGrid();
-                    });
+                    screen.update(graph.getObstacles(), alg.getVisited());
 
 
                     try {
@@ -64,8 +60,14 @@ public class Controller {
 
                 }
 
-                screen.drawPath(alg.getPath());
-                screen.drawGrid();
+                Platform.runLater(() -> {
+                    screen.drawBackground();
+                    screen.drawObs(graph.getObstacles());
+                    screen.drawVisited(alg.getVisited());
+                    screen.drawPath(alg.getPath());
+                    screen.drawGrid();
+                });
+
 
                 return null;
             }
@@ -87,9 +89,11 @@ public class Controller {
                 if(view.getAlgoMenu().getValue() == null || view.getStartCoorField().getText() == null ||
                         view.getEndCoorField().getText() == null) return;
 
-                screen.setClear();
-                screen.drawGrid();
-                screen.drawObs(graph.getObstacles());
+                Platform.runLater(() -> {
+                    screen.clear();
+                    screen.drawObs(graph.getObstacles());
+                });
+
                 graph.initAdjList();
 
                 Point startPoint = extractPoint(view.getStartCoorField().getText());
@@ -122,7 +126,7 @@ public class Controller {
             @Override
             public void handle(ActionEvent actionEvent) {
                 graph.reset();
-                screen.setClear();
+                screen.clear();
             }
         });
 
@@ -137,8 +141,11 @@ public class Controller {
                 if(x < graph.getWIDTH() && y < graph.getHEIGHT() && x >= 0 && y >= 0) {
                     graph.setObstacle(x, y);
 
-                    screen.drawObs(graph.getObstacles());
-                    screen.drawGrid();
+                    Platform.runLater(() -> {
+                        screen.drawBackground();
+                        screen.drawObs(graph.getObstacles());
+                        screen.drawGrid();
+                    });
                 }
             }
         });

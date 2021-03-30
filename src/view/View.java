@@ -25,21 +25,6 @@ public class View extends Pane {
     public View() {
         setPrefSize(650, 450);
 
-        startCoorField = new TextField("(0, 0)");
-        endCoorField = new TextField("(29, 29)");
-
-        algoMenu = new ComboBox();
-        algoMenu.getItems().add("Dijkstra's algorithm");
-        algoMenu.getItems().add("A* algorithm");
-        algoMenu.getItems().add("Depth First Search");
-        algoMenu.getItems().add("Breadth First Search");
-        algoMenu.setValue("Dijkstra's algorithm");
-
-        startButton = new Button("Visualize Path");
-        startButton.setPrefSize(150, 40);
-        clearButton = new Button("Clear");
-        clearButton.setPrefSize(90, 30);
-
         screen = new Screen();
         initContent();
     }
@@ -49,24 +34,34 @@ public class View extends Pane {
      */
     public void initContent() {
 
+        startCoorField = new TextField("(0, 0)");
         startCoorField.setLayoutY(120);
-        startCoorField.setLayoutX(30);
+        startCoorField.setLayoutX(10);
 
+        endCoorField = new TextField("(29, 29)");
         endCoorField.setLayoutY(170);
-        endCoorField.setLayoutX(30);
+        endCoorField.setLayoutX(10);
 
         screen.setLayoutX(200);
 
+        algoMenu = new ComboBox();
+        algoMenu.getItems().add("Dijkstra's algorithm");
+        algoMenu.getItems().add("A* algorithm");
+        algoMenu.getItems().add("Depth First Search");
+        algoMenu.getItems().add("Breadth First Search");
+        algoMenu.setValue("Dijkstra's algorithm");
         algoMenu.setLayoutY(240);
-        algoMenu.setLayoutX(30);
+        algoMenu.setLayoutX(10);
 
+        startButton = new Button("Visualize Path");
+        startButton.setPrefSize(150, 40);
         startButton.setLayoutY(50);
-        startButton.setLayoutX(30);
+        startButton.setLayoutX(10);
 
+        clearButton = new Button("Clear");
+        clearButton.setPrefSize(90, 30);
         clearButton.setLayoutY(290);
-        clearButton.setLayoutX(30);
-
-        screen.drawGrid();
+        clearButton.setLayoutX(10);
 
         getChildren().addAll(startButton, clearButton, screen, startCoorField, endCoorField, algoMenu);
 

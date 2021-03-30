@@ -19,7 +19,6 @@ public class BreadthFirstSearch implements Algorithm{
 
     private Node startNode;
     private Node endNode;
-    private Node current;
 
     /**
      *
@@ -51,7 +50,6 @@ public class BreadthFirstSearch implements Algorithm{
         startNode = tileTable[startPoint.x][startPoint.y];
         startNode.setDist(0);
         queue.add(startPoint);
-        current = startNode;
 
         endNode = tileTable[endPoint.x][endPoint.y];
 

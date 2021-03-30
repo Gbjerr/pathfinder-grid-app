@@ -63,6 +63,15 @@ public class Graph {
     }
 
     /**
+     * resets adjacency lisy of given position
+     * @param x
+     * @param y
+     */
+    public void resetList(int x, int y) {
+        adj[x][y] = null;
+    }
+
+    /**
      *
      * @param x - x coordinate
      * @param y - y coordinate
@@ -93,6 +102,5 @@ public class Graph {
     public void setObstacle(double x, double y) {
         obstacles[(int) x][(int) y] = true;
     }
-
 
 }

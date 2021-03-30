@@ -67,16 +67,20 @@ public class AStar implements Algorithm{
         AStarNode minNode = null;
 
         // go through visited nodes and their neighbors to find the tile which has shortest distance from the start tile
-        for(int index = 0; index < visited.size(); index++) {
-            Point p = visited.get(index);
-
+        for(Point p : visited) {
+            if(graph.getAdjLists()[p.x][p.y] == null) continue;
 
             LinkedList<Point> neighbors = graph.getAdjLists()[p.x][p.y];
-            int amtVisited = 0;
-            for (Point neighbor : neighbors) {
 
-                if (tileTable[neighbor.x][neighbor.y].isVisited()) {
-                    amtVisited++;
+            int neighborCount = neighbors.size();
+            for(Point neighbor : neighbors) {
+
+                if(tileTable[neighbor.x][neighbor.y].isVisited()) {
+                    if(neighborCount - 1 == 0) {
+                        graph.resetList(p.x, p.y);
+                        break;
+                    }
+                    neighborCount--;
                     continue;
                 }
 
@@ -87,11 +91,6 @@ public class AStar implements Algorithm{
                 }
             }
 
-            // when all neighbors are visited for a node, we don't have to go through that node again, thus delete it
-            if (amtVisited == neighbors.size()) {
-                visited.remove(index);
-                index--;
-            }
         }
 
         return minNode;
