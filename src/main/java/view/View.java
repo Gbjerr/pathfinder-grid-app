@@ -1,20 +1,14 @@
 package view;
 
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class representation of the view containing all visual modules, screens and buttons
@@ -30,7 +24,8 @@ public class View extends Pane {
 
     private Button startButton;
     private Button clearButton;
-    private VBox dialogPopup;
+    private Label nodesExpanded;
+    private Label pathLength;
 
     public View(Stage parentStage) {
         this.parentStage = parentStage;
@@ -75,13 +70,32 @@ public class View extends Pane {
         clearButton.setLayoutY(290);
         clearButton.setLayoutX(10);
 
+        Pane statBox = new Pane();
+        statBox.setPrefSize(197, 70);
+        statBox.setLayoutX(2);
+        statBox.setLayoutY(370);
+
+
+        statBox.setStyle("-fx-opacity: 0.5; -fx-border-radius: 10 10 0 0; -fx-background-radius: 10 10 10 10; -fx-background-color: coral;");
+        nodesExpanded = new Label("Nodes expanded: -- ");
+        nodesExpanded.setStyle("-fx-font-weight: bold;");
+        nodesExpanded.setLayoutX(7);
+        nodesExpanded.setLayoutY(385);
+        pathLength = new Label("Path length: -- ");
+        pathLength.setStyle("-fx-font-weight: bold;");
+        pathLength.setLayoutX(7);
+        pathLength.setLayoutY(410);
+
         getChildren().addAll(
                 startButton,
                 clearButton,
                 screen,
                 startCoordinateField,
                 endCoordinateField,
-                algoMenu
+                algoMenu,
+                statBox,
+                nodesExpanded,
+                pathLength
         );
 
     }
@@ -93,7 +107,7 @@ public class View extends Pane {
         stage.initOwner(parentStage);
         stage.initModality(Modality.WINDOW_MODAL);
 
-        dialogPopup = new VBox();
+        VBox dialogPopup = new VBox();
         dialogPopup.setPrefSize(200, 130);
         dialogPopup.setAlignment(Pos.CENTER);
 
@@ -105,6 +119,22 @@ public class View extends Pane {
         stage.setScene(scene);
         stage.show();
 
+    }
+
+    // show blank stats
+    public void resetStats() {
+        Platform.runLater(() -> {
+            nodesExpanded.setText("Nodes expanded: -- ");
+            pathLength.setText("Path length: --");
+        });
+    }
+
+    // update stats with the number of nodes and length of path
+    public void updateStats(int numNodesExpanded, double distance) {
+        Platform.runLater(() -> {
+            nodesExpanded.setText("Nodes expanded: " + numNodesExpanded);
+            pathLength.setText(String.format("Path length: %.2f units", distance));
+        });
     }
 
     //-------------------------- Bunch of setters and getters below
@@ -132,5 +162,4 @@ public class View extends Pane {
     public Button getClearButton() {
         return clearButton;
     }
-
 }

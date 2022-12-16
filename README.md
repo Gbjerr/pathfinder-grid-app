@@ -14,7 +14,7 @@ Java JDK 16 is required.<br>
 Run with maven: <b>./mvnw clean javafx:run</b>
 
 ## Screenshot
-<img width="487" alt="pic" src="https://user-images.githubusercontent.com/46920882/206899798-5a1e8d00-9da7-4a12-b4e6-d51d311db3fb.png">
+<img width="487" alt="pic" src="https://user-images.githubusercontent.com/46920882/208188717-c167f1ad-3d22-49de-a0b7-3051ace95de4.png">
 
 ## Structure
 ```bash

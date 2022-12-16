@@ -56,7 +56,6 @@ public abstract class PathAlgorithm {
     public ArrayList<Node> getPath() {
         ArrayList<Node> list = new ArrayList<>();
         Node temp = endNode;
-        System.out.println("Distance: " + temp.dist);
 
         while(temp != null) {
             list.add(temp);
@@ -122,5 +121,9 @@ public abstract class PathAlgorithm {
      */
     public double getEuclideanDistance(int startX, int startY, int endX, int endY) {
         return Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+    }
+
+    public double getFoundPathDistance() {
+        return endNode.getDist();
     }
 }

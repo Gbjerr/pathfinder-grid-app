@@ -54,7 +54,7 @@ public class Controller {
             if (inputFail || pathFindingProcedure.isActive()) {
                 return;
             }
-
+            view.resetStats();
             initPathAlgorithm();
 
             pathFindingProcedure = new PathFindingProcedure(alg, view);
@@ -67,6 +67,7 @@ public class Controller {
         view.getClearButton().setOnAction((actionEvent) -> {
 
             if(pathFindingProcedure.isActive()) return;
+            view.resetStats();
             graph.getObstacleNodes().forEach(n -> n.setState(NodeState.UNVISITED));
             screen.clear(graph.getObstacleNodes());
 
@@ -180,6 +181,7 @@ public class Controller {
             // render the screen with path if the algorithm found the end goal
             if(alg.pathIsFound()) {
                 screen.renderWithPath(alg.getObstacles(), alg.getVisited(), alg.getPath());
+                view.updateStats(alg.getVisited().size(), alg.getFoundPathDistance());
             }
             active = false;
             return null;

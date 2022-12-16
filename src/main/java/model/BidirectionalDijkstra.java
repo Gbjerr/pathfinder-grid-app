@@ -184,7 +184,6 @@ public class BidirectionalDijkstra extends PathAlgorithm {
     public ArrayList<Node> getPath(Node forward, Node backward) {
         ArrayList<Node> list = new ArrayList<>();
 
-        double totDist = getFoundDist(forward, backward);
         while(forward != null) {
             list.add(0, forward);
             forward = forward.getPrev();
@@ -194,7 +193,10 @@ public class BidirectionalDijkstra extends PathAlgorithm {
             backward = backward.getPrev();
         }
 
-        System.out.println("Distance: " + totDist);
         return list;
+    }
+    @Override
+    public double getFoundPathDistance() {
+        return getFoundDist(meetingFNode, meetingBNode);
     }
 }
