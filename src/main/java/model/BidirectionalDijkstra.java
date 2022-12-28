@@ -74,15 +74,19 @@ public class BidirectionalDijkstra extends PathAlgorithm {
     public void visitNext() {
         Node fwdPeek = pqForward.peek();
         Node bwdPeek = pqBackward.peek();
+        Node current;
+
+        // signal that path is found when connection has been made
+        if (meetingBNode != null && meetingFNode != null){
+            pathIsFound = true;
 
         // interrupt if there is no possible path from the forward and backward search
-        if(fwdPeek == null || bwdPeek == null) {
+        } else if(fwdPeek == null && bwdPeek == null) {
             Thread.currentThread().interrupt();
 
-        // alternate forward/backward search and expand if termination condition is not met yet
-        } else if(fwdPeek.getDist() + bwdPeek.getDist() < shortestDist) {
-            Node current;
-            if(mode == AlternationMode.FORWARD) {
+        // alternate forward/backward search
+        } else if(bwdPeek != null && fwdPeek != null && fwdPeek.getDist() + bwdPeek.getDist() < shortestDist) {
+            if (mode == AlternationMode.FORWARD) {
                 current = pqForward.poll();
                 expandForward(current);
             } else {
@@ -91,9 +95,15 @@ public class BidirectionalDijkstra extends PathAlgorithm {
             }
             mode = (mode == AlternationMode.FORWARD) ? AlternationMode.BACKWARD : AlternationMode.FORWARD;
 
-        // termination condition has been fulfilled thus signal that path is found
-        } else {
-            pathIsFound = true;
+        // continue seeking the forward queue if backward queue is finished
+        } else if (bwdPeek == null){
+            current = pqForward.poll();
+            expandForward(current);
+
+        // continue seeking the backward queue if forward queue is finished
+        } else if (fwdPeek == null){
+            current = pqBackward.poll();
+            expandBackward(current);
         }
     }
 
@@ -109,7 +119,7 @@ public class BidirectionalDijkstra extends PathAlgorithm {
                     shortestDist = tempDist;
                 }
                 continue;
-            } else if(neighbor.getState() == NodeState.VISITED) continue;
+            } else if(neighbor.getState() == NodeState.VISITED || neighbor.getState() == NodeState.OBSTACLE) continue;
 
             double distToNeighbor = getDistToNeighbor(node, neighbor);
 
@@ -140,7 +150,7 @@ public class BidirectionalDijkstra extends PathAlgorithm {
                     shortestDist = tempDist;
                 }
                 continue;
-            } else if (neighbor.getState() == NodeState.VISITED) continue;
+            } else if (neighbor.getState() == NodeState.VISITED || neighbor.getState() == NodeState.OBSTACLE) continue;
 
             // when a better distance has been found for neighbor update its variables accordingly
             double distToNeighbor = getDistToNeighbor(node, neighbor);
@@ -181,7 +191,7 @@ public class BidirectionalDijkstra extends PathAlgorithm {
         return getPath(meetingFNode, meetingBNode);
     }
 
-    public ArrayList<Node> getPath(Node forward, Node backward) {
+    private ArrayList<Node> getPath(Node forward, Node backward) {
         ArrayList<Node> list = new ArrayList<>();
 
         while(forward != null) {
