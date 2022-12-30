@@ -76,25 +76,12 @@ public class BidirectionalDijkstra extends PathAlgorithm {
         Node bwdPeek = pqBackward.peek();
         Node current;
 
-        // handle cases where forward or/and backward queue is empty
+        // interrupt if there is no possible path from the forward and backward search
         if(fwdPeek == null || bwdPeek == null) {
             if(meetingBNode != null && meetingFNode != null) {
                 pathIsFound = true;
             }
-            // interrupt if there is no possible path from the forward and backward search
-            if(fwdPeek == null && bwdPeek == null) {
-                Thread.currentThread().interrupt();
-            }
-            // continue seeking the forward queue if backward queue is finished
-            else if (bwdPeek == null){
-                current = pqForward.poll();
-                expandForward(current);
-            }
-            // continue seeking the backward queue if forward queue is finished
-            else {
-                current = pqBackward.poll();
-                expandBackward(current);
-            }
+            Thread.currentThread().interrupt();
         }
         // alternate forward/backward search
         else if(fwdPeek.getDist() + bwdPeek.getDist() < shortestDist) {
