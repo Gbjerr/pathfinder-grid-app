@@ -32,22 +32,6 @@ public abstract class PathAlgorithm {
     public boolean pathIsFound() {
         return endNode.getState() == NodeState.VISITED;
     }
-    
-    /**
-     * Getter for all visited tiles
-     * @return - a list of all visited tiles
-     */
-    public ArrayList<Node> getVisited() {
-        return graph.getVisitedNodes();
-    }
-
-    /**
-     * Getter for all obstacle tiles
-     * @return - a list of all obstacle tiles
-     */
-    public ArrayList<Node> getObstacles() {
-        return graph.getObstacleNodes();
-    }
 
     /**
      * Method returns the path from end node to start node
@@ -76,7 +60,7 @@ public abstract class PathAlgorithm {
             return;
         }
         boolean[][] obstacleMap = graph.getClonedObstacleMap();
-        graph = new Graph();
+        graph.reset();
 
         for (int x = 0; x < MAX_X_COORDINATE; x++) {
             for (int y = 0; y < MAX_Y_COORDINATE; y++) {
@@ -125,5 +109,17 @@ public abstract class PathAlgorithm {
 
     public double getFoundPathDistance() {
         return endNode.getDist();
+    }
+
+    public Graph getGraph() {
+        return graph;
+    }
+
+    public Point getStartPoint() {
+        return startNode.getPoint();
+    }
+
+    public Point getEndPoint() {
+        return endNode.getPoint();
     }
 }

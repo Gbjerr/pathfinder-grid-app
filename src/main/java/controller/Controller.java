@@ -25,7 +25,8 @@ public class Controller {
         graph = new Graph();
         graph.populateEmpty();
 
-        pathFindingProcedure = new PathFindingProcedure(null, null);
+        prepareForPathfinding(false);
+        pathFindingProcedure = new PathFindingProcedure(this.alg, view);
 
         initListeners();
     }
@@ -40,37 +41,29 @@ public class Controller {
         // key listener for the "Visualize path" button
         view.getStartButton().setOnAction((actionEvent) -> {
 
-            boolean inputFail = false;
-
-            if(extractPoint(view.getStartCoordinateField().getText()) == null) {
-                view.activateDialogPopup("Start coordinate field was entered incorrectly. Write in format: \"(x, y)\"");
-                inputFail = true;
-
-            } else if(extractPoint(view.getEndCoordinateField().getText()) == null) {
-                view.activateDialogPopup("End coordinate field was entered incorrectly. Write in format: \"(x, y)\"");
-                inputFail = true;
-            }
-
-            if (inputFail || pathFindingProcedure.isActive()) {
-                return;
-            }
-            view.resetStats();
-            initPathAlgorithm();
-
+            if(pathFindingProcedure.isActive() || !prepareForPathfinding(false)) return;
             pathFindingProcedure = new PathFindingProcedure(alg, view);
             runSelectedGraphAlgorithm();
 
+        });
 
+        // key listener for the "Generate maze" button
+        view.getGenMazeButton().setOnAction((actionEvent) -> {
+
+            if(pathFindingProcedure.isActive() || !prepareForPathfinding(true)) return;
+
+            MazeDfsGenerator.generateMaze(graph, alg.getStartPoint(), alg.getEndPoint());
+            view.getScreen().render(graph.getObstacleNodes(), graph.getVisitedNodes());
         });
 
         // key listener for the "Clear" button
         view.getClearButton().setOnAction((actionEvent) -> {
 
             if(pathFindingProcedure.isActive()) return;
+            graph.reset();
+            graph.populateEmpty();
             view.resetStats();
-            graph.getObstacleNodes().forEach(n -> n.setState(NodeState.UNVISITED));
             screen.clear(graph.getObstacleNodes());
-
         });
 
         // key listener for when mouse is dragged on the tiles to set up obstacles
@@ -86,7 +79,7 @@ public class Controller {
                 Node obstacleNode = graph.getNodeByCoordinate(x, y);
                 obstacleNode.setState(NodeState.OBSTACLE);
                 System.out.printf("(%d, %d)\n", obstacleNode.getXCoordinate(), obstacleNode.getYCoordinate());
-                screen.render(graph.getObstacleNodes(), graph.getVisitedNodes());
+                screen.clear(graph.getObstacleNodes());
 
             }
         });
@@ -95,7 +88,7 @@ public class Controller {
     private void runSelectedGraphAlgorithm() {
         Screen screen = view.getScreen();
 
-        screen.clear(alg.getObstacles());
+        screen.clear(graph.getObstacleNodes());
         Thread t = new Thread(pathFindingProcedure);
         t.start();
     }
@@ -141,6 +134,34 @@ public class Controller {
         return point;
     }
 
+    private boolean prepareForPathfinding(boolean resetGraph) {
+
+        if (!inputCoordinatesAreValid()) {
+            return false;
+        }
+
+        if(resetGraph) {
+            graph.reset();
+        }
+        view.resetStats();
+        initPathAlgorithm();
+
+        return true;
+    }
+
+    private boolean inputCoordinatesAreValid() {
+        if(extractPoint(view.getStartCoordinateField().getText()) == null) {
+            view.activateDialogPopup("Start coordinate field was entered incorrectly. Write in format: \"(x, y)\"");
+            return false;
+
+        } else if(extractPoint(view.getEndCoordinateField().getText()) == null) {
+            view.activateDialogPopup("End coordinate field was entered incorrectly. Write in format: \"(x, y)\"");
+            return false;
+        }
+        return true;
+    }
+
+
     /**
      * Class which defines the path finding procedure and rendering of the screen as it progresses.
      */
@@ -148,13 +169,15 @@ public class Controller {
 
         private final PathAlgorithm alg;
         private final View view;
+        private final Graph graph;
         private final Screen screen;
         private boolean active;
 
         public PathFindingProcedure(PathAlgorithm alg, View view) {
             this.alg = alg;
             this.view = view;
-            screen = (view == null) ? null : view.getScreen();
+            graph = alg.getGraph();
+            screen = view.getScreen();
         }
 
         /**
@@ -169,7 +192,7 @@ public class Controller {
                 try {
                     alg.visitNext();
                     // render the screen with the structures of the algorithm
-                    screen.render(alg.getObstacles(), alg.getVisited());
+                    screen.render(graph.getObstacleNodes(), graph.getVisitedNodes());
                     java.util.concurrent.TimeUnit.MILLISECONDS.sleep(10);
 
                 } catch (InterruptedException e) {
@@ -180,8 +203,8 @@ public class Controller {
 
             // render the screen with path if the algorithm found the end goal
             if(alg.pathIsFound()) {
-                screen.renderWithPath(alg.getObstacles(), alg.getVisited(), alg.getPath());
-                view.updateStats(alg.getVisited().size(), alg.getFoundPathDistance());
+                screen.renderWithPath(graph.getObstacleNodes(), graph.getVisitedNodes(), alg.getPath());
+                view.updateStats(graph.getVisitedNodes().size(), alg.getFoundPathDistance());
             }
             active = false;
             return null;

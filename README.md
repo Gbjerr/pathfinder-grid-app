@@ -1,3 +1,4 @@
+# pathfinder-grid-app
 A JavaFX application to visualize path finding in a grid system. The program finds the path from start to destination
 given its coordinates as input with a chosen path algorithm. The algorithm is chosen by selection in the drop-down menu 
 and obstacles can be drawn by dragging the mouse on the tiles. <br><br><b>Blue</b> tiles are the visited nodes, <b>Dark</b> tiles 
@@ -13,12 +14,12 @@ are obstacle nodes and <b>Orange</b> tiles represents the found path.<br><br>Alg
 Java JDK 16 is required.<br>
 Run with maven: <b>./mvnw clean javafx:run</b>
 
-## Screenshot
-<img width="487" alt="pic" src="https://user-images.githubusercontent.com/46920882/208188717-c167f1ad-3d22-49de-a0b7-3051ace95de4.png">
+## Demo
+![](https://user-images.githubusercontent.com/46920882/210182090-58743fa3-ecd9-4d32-8ed0-fdca84dd860f.gif)
 
 ## Structure
 ```bash
-src
+src/
 └── main
     ├── java
     │   ├── controller
@@ -30,6 +31,7 @@ src
     │   │   ├── BreadthFirstSearch.java
     │   │   ├── Dijkstra.java
     │   │   ├── Graph.java
+    │   │   ├── MazeDfsGenerator.java
     │   │   ├── Node.java
     │   │   ├── NodeState.java
     │   │   ├── PathAlgorithm.java
@@ -41,5 +43,6 @@ src
     │       ├── Screen.java
     │       └── View.java
     └── resources
+
 
 ```

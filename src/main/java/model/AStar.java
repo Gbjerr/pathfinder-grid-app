@@ -22,7 +22,7 @@ public class AStar extends PathAlgorithm {
         super(graph);
         preProcessNodes(startPoint, endPoint);
 
-        pq = new PriorityQueue<>(Comparator.comparingDouble(AStarNode::getDist));
+        pq = new PriorityQueue<>(Comparator.comparingDouble(AStarNode::getFCost));
         pq.add((AStarNode) startNode);
     }
 
@@ -34,7 +34,7 @@ public class AStar extends PathAlgorithm {
             return;
         }
         boolean[][] obstacleMapCache = graph.getClonedObstacleMap();
-        graph = new Graph();
+        graph.reset();
 
         // initialize tiles and set their heuristic cost
         for (int x = 0; x < MAX_X_COORDINATE; x++) {
@@ -74,7 +74,7 @@ public class AStar extends PathAlgorithm {
 
         // explore the distances from current node to all unvisited neighbors
         for(AStarNode neighbor : neighbors) {
-            if(neighbor.getState() == NodeState.VISITED) continue;
+            if(neighbor.getState() == NodeState.VISITED || neighbor.getState() == NodeState.OBSTACLE) continue;
 
             double distToNeighbor = getDistToNeighbor(node, neighbor);
 
@@ -91,6 +91,20 @@ public class AStar extends PathAlgorithm {
             }
         }
         node.setState(NodeState.VISITED);
+    }
+
+    @Override
+    public double getFoundPathDistance() {
+        double distance = 0;
+        AStarNode current = (AStarNode) endNode;
+        AStarNode prev = (AStarNode) current.getPrev();
+
+        while(prev != null) {
+            distance += getDistToNeighbor(current, prev);
+            current = prev;
+            prev = (AStarNode) prev.getPrev();
+        }
+        return distance;
     }
 
     /**

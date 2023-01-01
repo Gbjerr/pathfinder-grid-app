@@ -49,7 +49,7 @@ public class BidirectionalDijkstra extends PathAlgorithm {
             return;
         }
         boolean[][] obstacleMapCache = graph.getClonedObstacleMap();
-        graph = new Graph();
+        graph.reset();
 
         // initialize tiles and set their heuristic cost
         for (int x = 0; x < MAX_X_COORDINATE; x++) {
@@ -80,6 +80,7 @@ public class BidirectionalDijkstra extends PathAlgorithm {
         if(fwdPeek == null || bwdPeek == null) {
             if(meetingBNode != null && meetingFNode != null) {
                 pathIsFound = true;
+                return;
             }
             Thread.currentThread().interrupt();
         }

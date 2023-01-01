@@ -50,7 +50,7 @@ public class BreadthFirstSearch extends PathAlgorithm {
 
         // explore the distances from current node to all unvisited neighbors
         for(Node neighbor : graph.getNeighborsFromNode(node)) {
-            if(neighbor.getState() == NodeState.VISITED) {
+            if(neighbor.getState() == NodeState.VISITED || neighbor.getState() == NodeState.OBSTACLE) {
                 continue;
             }
 

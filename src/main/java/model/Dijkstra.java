@@ -29,13 +29,13 @@ public class Dijkstra extends PathAlgorithm {
     private void visit(Node node) {
 
         for(Node neighbor : graph.getNeighborsFromNode(node)) {
-            if(neighbor.getState() == NodeState.VISITED) {
+            if(neighbor.getState() == NodeState.VISITED || neighbor.getState() == NodeState.OBSTACLE) {
                 continue;
             }
 
             double distToNeighbor = getDistToNeighbor(node, neighbor);
 
-            if(distToNeighbor+ node.getDist() < neighbor.getDist()) {
+            if(distToNeighbor + node.getDist() < neighbor.getDist()) {
                 pq.remove(neighbor);
                 neighbor.setDist(distToNeighbor + node.getDist());
                 neighbor.setPrev(node);

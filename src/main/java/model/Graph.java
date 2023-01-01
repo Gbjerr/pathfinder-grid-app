@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 /**
- * Class representation of a graph used in with vertices and its neighbors represented as adjacency lists
- * and obstacles marked out with an boolean array
+ * Representation of a graph, which consists of a list of nodes where each node has a reference to its neighbors.
  */
 public class Graph {
 
     // width and height of grid graph
     private static int WIDTH;
     private static int HEIGHT;
-    private final ArrayList<Node> nodes;
+    private ArrayList<Node> nodes;
 
     public Graph() {
         WIDTH = 30;
@@ -105,10 +104,6 @@ public class Graph {
         return nodes;
     }
 
-    public ArrayList<Node> getUnvisitedNodes() {
-        return new ArrayList<>(nodes.stream().filter(n -> n.getState() == NodeState.UNVISITED).toList());
-    }
-
     public void addNode(Node node) {
         nodes.add(node);
     }
@@ -131,5 +126,9 @@ public class Graph {
                 nodes.add(new Node(x, y));
             }
         }
+    }
+
+    public void reset() {
+        nodes = new ArrayList<>();
     }
 }

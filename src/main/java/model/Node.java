@@ -19,6 +19,7 @@ public class Node {
         state = NodeState.UNVISITED;
         neighbors = null;
         dist = Double.MAX_VALUE;
+        prev = null;
     }
 
     public ArrayList<Node> getNeighbors() {
@@ -78,7 +79,7 @@ public class Node {
 
     @Override
     public int hashCode() {
-        return Objects.hash(prev, neighbors, point, state, dist);
+        return Objects.hash(point, state, dist);
     }
 
     @Override
@@ -90,5 +91,9 @@ public class Node {
                 ", state=" + state +
                 ", dist=" + dist +
                 '}';
+    }
+
+    public Point getPoint() {
+        return new Point(getXCoordinate(), getYCoordinate());
     }
 }

@@ -8,6 +8,7 @@ import java.util.Objects;
 public class AStarNode extends Node {
     private double gCost;
     private double hCost;
+    private double fCost;
 
     /**
      * Initializes variables for node
@@ -29,17 +30,20 @@ public class AStarNode extends Node {
     public double getGCost() {
         return gCost;
     }
-    public void setGCost(double GCost) {
-        gCost = GCost;
+    public void setGCost(double gCost) {
+        this.gCost = gCost;
     }
     public double getHCost() {
         return hCost;
     }
-    public void setFCost(double FCost) {
-        dist = FCost;
+    public void setHCost(double hCost) {
+        this.hCost = hCost;
+    }
+    public void setFCost(double fCost) {
+        this.fCost = fCost;
     }
     public double getFCost() {
-        return dist;
+        return fCost;
     }
 
     public void reset() {
@@ -62,16 +66,12 @@ public class AStarNode extends Node {
         return Objects.hash(super.hashCode(), gCost, hCost);
     }
 
-    public void setHCost(double hCost) {
-        this.hCost = hCost;
-    }
-
     @Override
     public String toString() {
         return "AStarNode{" +
                 "gCost=" + gCost +
                 ", hCost=" + hCost +
-                ", dist=" + dist +
+                ", fCost=" + fCost +
                 '}';
     }
 }

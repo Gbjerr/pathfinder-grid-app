@@ -23,6 +23,7 @@ public class View extends Pane {
     private ComboBox<String> algoMenu;
 
     private Button startButton;
+    private Button genMazeButton;
     private Button clearButton;
     private Label nodesExpanded;
     private Label pathLength;
@@ -65,9 +66,14 @@ public class View extends Pane {
         startButton.setLayoutY(50);
         startButton.setLayoutX(10);
 
+        genMazeButton = new Button("Generate maze");
+        genMazeButton.setPrefSize(130, 30);
+        genMazeButton.setLayoutY(290);
+        genMazeButton.setLayoutX(10);
+
         clearButton = new Button("Clear");
         clearButton.setPrefSize(90, 30);
-        clearButton.setLayoutY(290);
+        clearButton.setLayoutY(330);
         clearButton.setLayoutX(10);
 
         Pane statBox = new Pane();
@@ -88,6 +94,7 @@ public class View extends Pane {
 
         getChildren().addAll(
                 startButton,
+                genMazeButton,
                 clearButton,
                 screen,
                 startCoordinateField,
@@ -161,5 +168,8 @@ public class View extends Pane {
 
     public Button getClearButton() {
         return clearButton;
+    }
+    public Button getGenMazeButton() {
+        return genMazeButton;
     }
 }
