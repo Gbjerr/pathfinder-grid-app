@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Arrays;
 
 /**
  * The MazeDfsGenerator class generates a maze using a depth-first search (DFS) algorithm.
@@ -28,30 +28,47 @@ public class MazeDfsGenerator {
         fifoQueue = new LinkedList<>();
         graph = inputGraph;
         obstacleMap = new boolean[graph.getWIDTH()][graph.getHEIGHT()];
+        for(int x = 0; x < obstacleMap.length; x++) {
+            Arrays.fill(obstacleMap[x], true);
+        }
         predecessorMap = new HashMap<>();
 
         endNode = graph.getNodeByCoordinate(end.x, end.y);
 
+        // retrieve start node and make sure it becomes the first node that the random DFS will handle
         Node startNode = graph.getNodeByCoordinate(start.x, start.y);
         fifoQueue.push(startNode);
         predecessorMap.put(startNode, null);
 
-        // create a graph until the end node is not an obstacle (yes this is lazy)
-        try {
-            randomizedDfs();
-        } catch (NoSuchElementException ex) {
-            generateMaze(graph, start, end);
-            return;
+        randomizedDfs();
+
+        // connect end node to the maze so that there can be a path to it
+        if(isMarkedAsObstacle(endNode)) {
+            connectNodeToMaze(endNode);
         }
 
         transferObstacles();
     }
 
     /**
+     * Connect node to the maze so that it can be found from any other point in the graph.
+     *
+     * @param node - the node to be connected
+     */
+    private static void connectNodeToMaze(Node node) {
+        obstacleMap[node.getXCoordinate()][node.getYCoordinate()] = false;
+        List<Node> visitedNeighbors = node.getNeighbors().stream()
+                .filter(n -> !isMarkedAsObstacle(n)).toList();
+        if(visitedNeighbors.isEmpty()) {
+            connectNodeToMaze(node.getNeighbors().stream().findFirst().get());
+        }
+    }
+
+    /**
      * Transfers the obstacles from the obstacle map to the Graph object.
      */
     private static void transferObstacles() {
-        graph.getNodes().stream().filter(n -> !obstacleMap[n.getXCoordinate()][n.getYCoordinate()]).forEach(n -> n.setState(NodeState.OBSTACLE));
+        graph.getNodes().stream().filter(n -> isMarkedAsObstacle(n)).forEach(n -> n.setState(NodeState.OBSTACLE));
     }
 
 
@@ -60,18 +77,19 @@ public class MazeDfsGenerator {
      */
     private static void randomizedDfs() {
 
-        while(!fifoQueue.isEmpty() || !obstacleMap[endNode.getXCoordinate()][endNode.getYCoordinate()]) {
+        while(!fifoQueue.isEmpty()) {
             Node current = fifoQueue.pop();
-            if(obstacleMap[current.getXCoordinate()][current.getYCoordinate()] || hasAVisitedNeighbor(current, predecessorMap.get(current))) {
+            if(!isMarkedAsObstacle(current) || hasNonObstacleNeighbors(current, predecessorMap.get(current))) {
                 continue;
             }
-            obstacleMap[current.getXCoordinate()][current.getYCoordinate()] = true;
+            obstacleMap[current.getXCoordinate()][current.getYCoordinate()] = false;
 
+            // shuffle the node's neighbors so that next neighbor is chosen randomly
             List<Node> neighbors = current.getNeighbors();
             Collections.shuffle(neighbors);
 
             for(Node n : neighbors) {
-                if(!obstacleMap[n.getXCoordinate()][n.getYCoordinate()] && !hasAVisitedNeighbor(n, current)) {
+                if(isMarkedAsObstacle(n) && !hasNonObstacleNeighbors(n, current)) {
                     predecessorMap.put(n, current);
                     fifoQueue.push(n);
                 }
@@ -86,12 +104,22 @@ public class MazeDfsGenerator {
      * @param predecessor the predecessor Node to exclude from the check
      * @return true if the Node has any visited neighbors (excluding the predecessor), false otherwise
      */
-    private static boolean hasAVisitedNeighbor(Node node, Node predecessor) {
+    private static boolean hasNonObstacleNeighbors(Node node, Node predecessor) {
         for (Node n : node.getNeighbors()) {
-            if(obstacleMap[n.getXCoordinate()][n.getYCoordinate()] && !n.equals(predecessor)) {
+            if(!isMarkedAsObstacle(n) && !n.equals(predecessor)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Look if the obstacle map has marked given node as an obstacle.
+     *
+     * @param node - node to check
+     * @return if the node has been marked
+     */
+    private static boolean isMarkedAsObstacle(Node node) {
+        return obstacleMap[node.getXCoordinate()][node.getYCoordinate()];
     }
 }
