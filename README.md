@@ -1,8 +1,7 @@
 # pathfinder-grid-app
 A JavaFX application to visualize path finding in a grid system. The program finds the path from start to destination
 given its coordinates as input with a chosen path algorithm. The algorithm is chosen by selection in the drop-down menu 
-and obstacles can be drawn by dragging the mouse on the tiles. <br><br><b>Blue</b> tiles are the visited nodes, <b>Dark</b> tiles 
-are obstacle nodes and <b>Orange</b> tiles represents the found path.<br><br>Algorithms to choose from:
+and obstacles can be drawn by dragging the mouse on the tiles. Mazes can be generated, which is done through a randomized DFS algorithm. <br><br><b>Blue</b> tiles are the visited nodes, <b>Dark</b> tiles are obstacle nodes and <b>Orange</b> tiles represents the found path. <br><br>Algorithms to choose from:
 <ul>
     <li>Breadth first search</li>
     <li>Dijkstra's algorithm</li>
