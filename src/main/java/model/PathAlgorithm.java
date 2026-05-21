@@ -67,16 +67,15 @@ public abstract class PathAlgorithm {
                 Node node = new Node(x, y);
                 if(obstacleMap[x][y]) {
                     node.setState(NodeState.OBSTACLE);
+                    graph.getObstacleNodes().add(node);
                 }
-                graph.addNode(node);
+                graph.setNode(x, y, node);
             }
         }
         startNode = graph.getNodeByCoordinate(startPoint.x, startPoint.y);
         startNode.setDist(0);
 
         endNode = graph.getNodeByCoordinate(endPoint.x, endPoint.y);
-
-        graph.initNeighbors();
     }
 
     /**

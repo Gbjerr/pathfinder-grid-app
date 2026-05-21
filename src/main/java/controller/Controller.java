@@ -78,6 +78,7 @@ public class Controller {
 
                 Node obstacleNode = graph.getNodeByCoordinate(x, y);
                 obstacleNode.setState(NodeState.OBSTACLE);
+                graph.getObstacleNodes().add(obstacleNode);
                 System.out.printf("(%d, %d)\n", obstacleNode.getXCoordinate(), obstacleNode.getYCoordinate());
                 screen.clear(graph.getObstacleNodes());
 

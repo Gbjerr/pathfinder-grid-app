@@ -47,7 +47,7 @@ public class Screen extends Canvas {
      * @param obstacles - obstacle nodes to be drawn
      * @param visited - visited nodes to be drawn
      */
-    public void render(ArrayList<Node> obstacles, ArrayList<Node> visited) {
+    public void render(List<Node> obstacles, List<Node> visited) {
         Platform.runLater(() -> {
             gc.clearRect(0, 0, getWidth(), getHeight());
             drawBackground();

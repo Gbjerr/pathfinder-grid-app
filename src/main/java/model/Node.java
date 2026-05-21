@@ -9,7 +9,6 @@ import java.util.Objects;
 public class Node {
 
     private Node prev;
-    private ArrayList<Node> neighbors; // surrounding nodes
     private final Point point; // coordinate
     private NodeState state;
     protected double dist; // distance
@@ -17,17 +16,8 @@ public class Node {
     public Node(int x, int y) {
         point = new Point(x, y);
         state = NodeState.UNVISITED;
-        neighbors = null;
         dist = Double.MAX_VALUE;
         prev = null;
-    }
-
-    public ArrayList<Node> getNeighbors() {
-        return neighbors;
-    }
-
-    public void setNeighbors(ArrayList<Node> neighbors) {
-        this.neighbors = neighbors;
     }
 
     public void setPrev(Node prev) {
@@ -64,7 +54,6 @@ public class Node {
 
     public void reset() {
         state = NodeState.UNVISITED;
-        neighbors = null;
         dist = 0;
         prev = null;
     }
@@ -86,7 +75,6 @@ public class Node {
     public String toString() {
         return "Node{" +
                 "prev=" + prev +
-                ", neighbors=" + neighbors +
                 ", point=" + point +
                 ", state=" + state +
                 ", dist=" + dist +

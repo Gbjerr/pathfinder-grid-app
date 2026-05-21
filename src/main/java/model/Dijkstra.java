@@ -43,6 +43,7 @@ public class Dijkstra extends PathAlgorithm {
             }
         }
         node.setState(NodeState.VISITED);
+        graph.getVisitedNodes().add(node);
     }
 
     /**

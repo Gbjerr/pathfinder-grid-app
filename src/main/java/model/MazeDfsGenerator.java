@@ -57,10 +57,11 @@ public class MazeDfsGenerator {
      */
     private static void connectNodeToMaze(Node node) {
         obstacleMap[node.getXCoordinate()][node.getYCoordinate()] = false;
-        List<Node> visitedNeighbors = node.getNeighbors().stream()
+        List<Node> neighbors = graph.getNeighborsFromNode(node);
+        List<Node> nonObstacleNeighbors = neighbors.stream()
                 .filter(n -> !isMarkedAsObstacle(n)).toList();
-        if(visitedNeighbors.isEmpty()) {
-            connectNodeToMaze(node.getNeighbors().stream().findFirst().get());
+        if(nonObstacleNeighbors.isEmpty()) {
+            connectNodeToMaze(neighbors.stream().findFirst().get());
         }
     }
 
@@ -68,7 +69,13 @@ public class MazeDfsGenerator {
      * Transfers the obstacles from the obstacle map to the Graph object.
      */
     private static void transferObstacles() {
-        graph.getNodes().stream().filter(n -> isMarkedAsObstacle(n)).forEach(n -> n.setState(NodeState.OBSTACLE));
+        graph.getNodes()
+                .forEach(n -> {
+                    if(isMarkedAsObstacle(n)) {
+                        n.setState(NodeState.OBSTACLE);
+                        graph.getObstacleNodes().add(n);
+                    }
+                });
     }
 
 
@@ -85,7 +92,7 @@ public class MazeDfsGenerator {
             obstacleMap[current.getXCoordinate()][current.getYCoordinate()] = false;
 
             // shuffle the node's neighbors so that next neighbor is chosen randomly
-            List<Node> neighbors = current.getNeighbors();
+            List<Node> neighbors = graph.getNeighborsFromNode(current);
             Collections.shuffle(neighbors);
 
             for(Node n : neighbors) {
@@ -105,7 +112,7 @@ public class MazeDfsGenerator {
      * @return true if the Node has any visited neighbors (excluding the predecessor), false otherwise
      */
     private static boolean hasNonObstacleNeighbors(Node node, Node predecessor) {
-        for (Node n : node.getNeighbors()) {
+        for (Node n : graph.getNeighborsFromNode(node)) {
             if(!isMarkedAsObstacle(n) && !n.equals(predecessor)) {
                 return true;
             }

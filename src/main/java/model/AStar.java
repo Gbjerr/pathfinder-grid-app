@@ -46,8 +46,9 @@ public class AStar extends PathAlgorithm {
 
                 if(obstacleMapCache[x][y]) {
                     node.setState(NodeState.OBSTACLE);
+                    graph.getObstacleNodes().add(node);
                 }
-                graph.addNode(node);
+                graph.setNode(x, y, node);
             }
         }
 
@@ -58,8 +59,6 @@ public class AStar extends PathAlgorithm {
         AStarNode endNodeTemp = (AStarNode) graph.getNodeByCoordinate(endPoint.x, endPoint.y);
         endNodeTemp.setHCost(0);
         endNode = endNodeTemp;
-
-        graph.initNeighbors();
     }
 
     /**
@@ -91,6 +90,7 @@ public class AStar extends PathAlgorithm {
             }
         }
         node.setState(NodeState.VISITED);
+        graph.getVisitedNodes().add(node);
     }
 
     @Override

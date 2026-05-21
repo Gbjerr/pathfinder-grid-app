@@ -1,6 +1,8 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -11,41 +13,16 @@ public class Graph {
     // width and height of grid graph
     private static int WIDTH;
     private static int HEIGHT;
-    private ArrayList<Node> nodes;
+    private final Node[][] nodes;
+    private final List<Node> obstacleNodes;
+    private final List<Node> visitedNodes;
 
     public Graph() {
         WIDTH = 30;
         HEIGHT = 30;
-        nodes = new ArrayList<>();
-    }
-
-    /**
-     * Initializes adjacency lists.
-     */
-    public void initNeighbors() {
-
-        for(Node node : nodes) {
-                if(node.getState() == NodeState.OBSTACLE) continue;
-                ArrayList<Node> neighbors = new ArrayList<>();
-
-                int x = node.getXCoordinate();
-                int y = node.getYCoordinate();
-                for(int i = x - 1; i < x + 2; i++) {
-                    for(int j = y - 1; j < y + 2; j++) {
-
-                        // if coordinate (i, j) is out of bounds, equal to (x, y) or if it's an obstacle then skip
-                        if(isOutOfBounds(i, j) || (i == x && j == y) || getNodeByCoordinate(i, j).getState() == NodeState.OBSTACLE) continue;
-
-                        int xNeighbor = i;
-                        int yNeighbor = j;
-
-                        neighbors.add(
-                                getNodeByCoordinate(xNeighbor, yNeighbor)
-                        );
-                    }
-                }
-                node.setNeighbors(neighbors);
-        }
+        nodes = new Node[WIDTH][HEIGHT];
+        obstacleNodes = new ArrayList<>();
+        visitedNodes = new ArrayList<>();
     }
 
     /**
@@ -81,54 +58,80 @@ public class Graph {
         return HEIGHT;
     }
 
-    public ArrayList<Node> getObstacleNodes() {
-        return new ArrayList<>(
-                nodes.stream().filter(n -> n.getState() == NodeState.OBSTACLE).toList()
-        );
+    public List<Node> getObstacleNodes() {
+        return this.obstacleNodes;
     }
 
-    public ArrayList<Node> getVisitedNodes() {
-        return new ArrayList<>(
-                nodes.stream().filter(n -> n.getState() == NodeState.VISITED).toList()
-        );
+    public List<Node> getVisitedNodes() {
+        return this.visitedNodes;
     }
 
-    public ArrayList<Node> getNeighborsFromNode(Node node) {
-        int idx = nodes.indexOf(node);
-        if(idx == -1) return new ArrayList<>();
+    public List<Node> getNeighborsFromNode(Node node) {
+        List<Node> neighbors = new ArrayList<>();
 
-        return nodes.get(idx).getNeighbors();
+        int x = node.getXCoordinate();
+        int y = node.getYCoordinate();
+        for(int neighborX = x - 1; neighborX < x + 2; neighborX++) {
+            for(int neighborY = y - 1; neighborY < y + 2; neighborY++) {
+
+                // if coordinate (i, j) is out of bounds, equal to (x, y) or if it's an obstacle then skip
+                if(isOutOfBounds(neighborX, neighborY)
+                        || (neighborX == x && neighborY == y)
+                        || nodes[neighborX][neighborY].getState() == NodeState.OBSTACLE) {
+                    continue;
+                }
+
+                neighbors.add(getNodeByCoordinate(neighborX, neighborY));
+            }
+        }
+
+        return neighbors;
     }
 
-    public ArrayList<Node> getNodes() {
-        return nodes;
-    }
-
-    public void addNode(Node node) {
-        nodes.add(node);
+    public List<Node> getNodes() {
+        List<Node> visitedNodes = new ArrayList<>();
+        for(int x = 0; x < WIDTH; x++) {
+            for(int y = 0; y < HEIGHT; y++) {
+                visitedNodes.add(nodes[x][y]);
+            }
+        }
+        return visitedNodes;
     }
 
     public Node getNodeByCoordinate(int x, int y) {
-        Optional<Node> optNode = getNodes().stream().filter(
-                n -> x == n.getXCoordinate() && y == n.getYCoordinate()
-        ).findFirst();
-        if(optNode.isEmpty()) {
-            System.out.println("Node could not be found");
+        if(isOutOfBounds(x, y)) {
+            System.out.println("Requested node is out of bounds.");
             return null;
         }
-        return optNode.get();
+        return nodes[x][y];
     }
 
     public void populateEmpty() {
-
         for(int x = 0; x < WIDTH; x++) {
             for(int y = 0; y < HEIGHT; y++) {
-                nodes.add(new Node(x, y));
+                nodes[x][y] = new Node(x, y);
             }
         }
     }
 
     public void reset() {
-        nodes = new ArrayList<>();
+        for(int i = 0; i < WIDTH; i++) {
+            Arrays.fill(nodes[i], null);
+        }
+        obstacleNodes.clear();
+        visitedNodes.clear();
+    }
+
+    public void setNode(int x, int y, Node node) {
+        if(nodes == null) {
+            System.out.println("Graph variable has not been assigned");
+            return;
+        }
+        if(isOutOfBounds(x, y)) {
+            System.out.println("Requested node is out of bounds.");
+            return;
+        }
+
+        nodes[x][y] = node;
     }
 }

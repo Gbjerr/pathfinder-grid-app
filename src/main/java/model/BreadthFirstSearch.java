@@ -62,6 +62,7 @@ public class BreadthFirstSearch extends PathAlgorithm {
             queue.add(neighbor);
         }
         node.setState(NodeState.VISITED);
+        graph.getVisitedNodes().add(node);
     }
 
 }

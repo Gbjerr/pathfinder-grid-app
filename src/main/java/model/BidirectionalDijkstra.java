@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.PriorityQueue;
 
 public class BidirectionalDijkstra extends PathAlgorithm {
@@ -27,6 +28,8 @@ public class BidirectionalDijkstra extends PathAlgorithm {
     public BidirectionalDijkstra(Point startPoint, Point endPoint, Graph graph) {
         super(graph);
         preProcessNodes(startPoint, endPoint);
+        //
+        endNode.setDist(0);
 
         pathIsFound = false;
 
@@ -40,34 +43,6 @@ public class BidirectionalDijkstra extends PathAlgorithm {
 
         shortestDist = Double.MAX_VALUE;
         mode = AlternationMode.FORWARD;
-    }
-
-    @Override
-    protected void preProcessNodes(Point startPoint, Point endPoint) {
-
-        if(graph == null) {
-            return;
-        }
-        boolean[][] obstacleMapCache = graph.getClonedObstacleMap();
-        graph.reset();
-
-        // initialize tiles and set their heuristic cost
-        for (int x = 0; x < MAX_X_COORDINATE; x++) {
-            for (int y = 0; y < MAX_Y_COORDINATE; y++) {
-                Node node = new Node(x, y);
-                node.setDist(Double.MAX_VALUE);
-                if(obstacleMapCache[x][y]) {
-                    node.setState(NodeState.OBSTACLE);
-                }
-                graph.addNode(node);
-            }
-        }
-
-        startNode = graph.getNodeByCoordinate(startPoint.x, startPoint.y);
-        startNode.setDist(0);
-        endNode = graph.getNodeByCoordinate(endPoint.x, endPoint.y);
-        endNode.setDist(0);
-        graph.initNeighbors();
     }
 
     @Override
@@ -94,7 +69,9 @@ public class BidirectionalDijkstra extends PathAlgorithm {
                 current = pqBackward.poll();
                 expandBackward(current);
             }
-            mode = (mode == AlternationMode.FORWARD) ? AlternationMode.BACKWARD : AlternationMode.FORWARD;
+            mode = mode == AlternationMode.FORWARD
+                    ? AlternationMode.BACKWARD
+                    : AlternationMode.FORWARD;
 
         } else {
             pathIsFound = true;
@@ -102,7 +79,7 @@ public class BidirectionalDijkstra extends PathAlgorithm {
     }
 
     private void expandBackward(Node node) {
-        ArrayList<Node> neighbors = graph.getNeighborsFromNode(node);
+        List<Node> neighbors = graph.getNeighborsFromNode(node);
 
         for(Node neighbor : neighbors) {
             // backward search clashes with forward search, assess if found distance is the current shortest
@@ -128,12 +105,13 @@ public class BidirectionalDijkstra extends PathAlgorithm {
         }
 
         node.setState(NodeState.VISITED);
+        graph.getVisitedNodes().add(node);
         pqBackward.remove(node);
         closedBackward.add(node);
     }
 
     private void expandForward(Node node) {
-        ArrayList<Node> neighbors = graph.getNeighborsFromNode(node);
+        List<Node> neighbors = graph.getNeighborsFromNode(node);
 
         for(Node neighbor : neighbors) {
             // forward search clashes with backward search, assess if found distance is current shortest
@@ -158,6 +136,7 @@ public class BidirectionalDijkstra extends PathAlgorithm {
         }
 
         node.setState(NodeState.VISITED);
+        graph.getVisitedNodes().add(node);
         pqForward.remove(node);
         closedForward.add(node);
     }
