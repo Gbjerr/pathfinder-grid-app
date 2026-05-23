@@ -14,19 +14,19 @@ import java.util.List;
  */
 public class Screen extends Canvas {
 
-    private final int numTilesPerSquareSide = 30;
     private final GraphicsContext gc;
-    private final int tileSideLength;
+    private final int gridDimension;
+    private final double tileSideLength;
 
     /**
      * Constructor sets the dimensions of the screen, with appropriate graphics context
      */
-    public Screen() {
-
+    public Screen(int gridDimension) {
         setWidth(450);
         setHeight(450);
 
-        tileSideLength = (int) getWidth() / numTilesPerSquareSide;
+        this.gridDimension = gridDimension;
+        tileSideLength = getWidth() / gridDimension;
 
         gc = getGraphicsContext2D();
         init();
@@ -48,6 +48,7 @@ public class Screen extends Canvas {
      * @param visited - visited nodes to be drawn
      */
     public void render(List<Node> obstacles, List<Node> visited) {
+
         Platform.runLater(() -> {
             gc.clearRect(0, 0, getWidth(), getHeight());
             drawBackground();
@@ -64,6 +65,7 @@ public class Screen extends Canvas {
      * @param path - the path, as a collection of nodes, to be drawn
      */
     public void renderWithPath(List<Node> obstacles, List<Node> visited, List<Node> path) {
+
         Platform.runLater(() -> {
             gc.clearRect(0, 0, getWidth(), getHeight());
             drawBackground();
@@ -94,8 +96,10 @@ public class Screen extends Canvas {
     private void drawVisited(List<Node> visited) {
         gc.setFill(Color.web("768FD4"));
 
-        for(Node visitedNode : visited) {
-            gc.fillRect(visitedNode.getXCoordinate() * tileSideLength, visitedNode.getYCoordinate() * tileSideLength, tileSideLength, tileSideLength);
+        synchronized (visited) {
+            for(Node visitedNode : visited) {
+                gc.fillRect(visitedNode.getXCoordinate() * tileSideLength, visitedNode.getYCoordinate() * tileSideLength, tileSideLength, tileSideLength);
+            }
         }
 
     }
@@ -107,8 +111,10 @@ public class Screen extends Canvas {
     private void drawObstacles(List<Node> obstacles) {
         gc.setFill(Color.web("393A3D"));
 
-        for(Node obstacle : obstacles) {
-            gc.fillRect(obstacle.getXCoordinate() * tileSideLength, obstacle.getYCoordinate() * tileSideLength, tileSideLength, tileSideLength);
+        synchronized (obstacles) {
+            for(Node obstacle : obstacles) {
+                gc.fillRect(obstacle.getXCoordinate() * tileSideLength, obstacle.getYCoordinate() * tileSideLength, tileSideLength, tileSideLength);
+            }
         }
     }
 
@@ -118,9 +124,11 @@ public class Screen extends Canvas {
     private void drawGrid() {
         gc.setStroke(Color.WHITE);
 
-        for(int i = 0; i < getHeight(); i += tileSideLength) {
-            gc.strokeLine(0, i, getWidth(), i); // vertical line
-            gc.strokeLine(i, 0, i, getHeight()); // horizontal line
+        // Draw lines from grid indices to avoid integer rounding drift for fractional tile sizes.
+        for(int i = 0; i <= gridDimension; i++) {
+            double p = i * tileSideLength;
+            gc.strokeLine(0, p, getWidth(), p); // horizontal line
+            gc.strokeLine(p, 0, p, getHeight()); // vertical line
         }
 
     }
@@ -133,7 +141,6 @@ public class Screen extends Canvas {
 
         gc.setFill(Color.web("DE6E2E"));
         for(Node node : list) {
-
             gc.fillRect(node.getXCoordinate() * tileSideLength, node.getYCoordinate() * tileSideLength, tileSideLength, tileSideLength);
         }
     }
@@ -144,5 +151,9 @@ public class Screen extends Canvas {
     private void drawBackground() {
         gc.setFill(Color.web("C0C0C0"));
         gc.fillRect(0, 0, getWidth(), getHeight());
+    }
+
+    public double getTileSideLength() {
+        return this.tileSideLength;
     }
 }

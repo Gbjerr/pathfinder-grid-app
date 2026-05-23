@@ -28,25 +28,26 @@ public class View extends Pane {
     private Label nodesExpanded;
     private Label pathLength;
 
-    public View(Stage parentStage) {
+    public View(Stage parentStage, int gridDimension) {
         this.parentStage = parentStage;
 
         setPrefSize(650, 450);
 
-        screen = new Screen();
-        initContent();
+        screen = new Screen(gridDimension);
+        initContent(gridDimension);
     }
 
     /**
      * method which positions and creates all the UI elements
      */
-    private void initContent() {
+    private void initContent(int gridDimension) {
 
         startCoordinateField = new TextField("(0, 0)");
         startCoordinateField.setLayoutY(120);
         startCoordinateField.setLayoutX(10);
 
-        endCoordinateField = new TextField("(29, 29)");
+        int furthestPosXY = gridDimension - 1;
+        endCoordinateField = new TextField("("+ furthestPosXY + "," + " " + furthestPosXY + ")");
         endCoordinateField.setLayoutY(170);
         endCoordinateField.setLayoutX(10);
 

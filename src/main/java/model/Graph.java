@@ -2,8 +2,8 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Representation of a graph, which consists of a list of nodes where each node has a reference to its neighbors.
@@ -11,18 +11,18 @@ import java.util.Optional;
 public class Graph {
 
     // width and height of grid graph
-    private static int WIDTH;
-    private static int HEIGHT;
+    private final int width;
+    private final int height;
     private final Node[][] nodes;
     private final List<Node> obstacleNodes;
     private final List<Node> visitedNodes;
 
-    public Graph() {
-        WIDTH = 30;
-        HEIGHT = 30;
-        nodes = new Node[WIDTH][HEIGHT];
-        obstacleNodes = new ArrayList<>();
-        visitedNodes = new ArrayList<>();
+    public Graph(int width, int height) {
+        this.width = width;
+        this.height = height;
+        nodes = new Node[this.width][this.height];
+        obstacleNodes = Collections.synchronizedList(new ArrayList<>());
+        visitedNodes = Collections.synchronizedList(new ArrayList<>());
     }
 
     /**
@@ -30,7 +30,7 @@ public class Graph {
      * @return - a two-dimensional array where obstacles are marked.
      */
     public boolean[][] getClonedObstacleMap() {
-        boolean[][] obstacleMap = new boolean[WIDTH][HEIGHT];
+        boolean[][] obstacleMap = new boolean[width][height];
         getObstacleNodes().forEach(n ->
                 obstacleMap[n.getXCoordinate()][n.getYCoordinate()] = true
         );
@@ -45,17 +45,17 @@ public class Graph {
      * @return - returns whether the coordinate is out of bounds or not
      */
     public boolean isOutOfBounds(int x, int y) {
-        return (x < 0) || !(x < WIDTH) ||
-                (y < 0) || !(y < HEIGHT);
+        return (x < 0) || !(x < width) ||
+                (y < 0) || !(y < height);
     }
 
     //-------------------------- Bunch of setters and getters below
-    public int getWIDTH() {
-        return WIDTH;
+    public int getWidth() {
+        return width;
     }
 
-    public int getHEIGHT() {
-        return HEIGHT;
+    public int getHeight() {
+        return height;
     }
 
     public List<Node> getObstacleNodes() {
@@ -90,8 +90,8 @@ public class Graph {
 
     public List<Node> getNodes() {
         List<Node> visitedNodes = new ArrayList<>();
-        for(int x = 0; x < WIDTH; x++) {
-            for(int y = 0; y < HEIGHT; y++) {
+        for(int x = 0; x < width; x++) {
+            for(int y = 0; y < height; y++) {
                 visitedNodes.add(nodes[x][y]);
             }
         }
@@ -107,15 +107,15 @@ public class Graph {
     }
 
     public void populateEmpty() {
-        for(int x = 0; x < WIDTH; x++) {
-            for(int y = 0; y < HEIGHT; y++) {
+        for(int x = 0; x < width; x++) {
+            for(int y = 0; y < height; y++) {
                 nodes[x][y] = new Node(x, y);
             }
         }
     }
 
     public void reset() {
-        for(int i = 0; i < WIDTH; i++) {
+        for(int i = 0; i < width; i++) {
             Arrays.fill(nodes[i], null);
         }
         obstacleNodes.clear();

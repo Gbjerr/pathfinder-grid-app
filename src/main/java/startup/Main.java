@@ -1,5 +1,7 @@
 package startup;
 
+import model.Graph;
+import view.GridConfigView;
 import view.View;
 import controller.Controller;
 import javafx.application.Application;
@@ -9,14 +11,19 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
-        View view = new View(primaryStage);
-        Scene scene = new Scene(view);
 
-        new Controller(view);
+        GridConfigView gridConfigView = new GridConfigView(gridDimension -> {
+            Graph graph = new Graph(gridDimension, gridDimension);
+            View mainView = new View(primaryStage, gridDimension);
+            new Controller(mainView, graph);
 
-        primaryStage.setTitle("Path finder");
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
+            primaryStage.setTitle("Path finder");
+            primaryStage.setScene(new Scene(mainView));
+            primaryStage.setResizable(false);
+        });
+
+        primaryStage.setScene(new Scene(gridConfigView));
+        primaryStage.setTitle("Grid configuration");
         primaryStage.show();
     }
 

@@ -14,8 +14,8 @@ public abstract class PathAlgorithm {
     protected Node endNode;
 
     protected PathAlgorithm(Graph graph) {
-        MAX_X_COORDINATE = graph.getWIDTH();
-        MAX_Y_COORDINATE = graph.getHEIGHT();
+        MAX_X_COORDINATE = graph.getWidth();
+        MAX_Y_COORDINATE = graph.getHeight();
 
         this.graph = graph;
     }

@@ -27,7 +27,7 @@ public class MazeDfsGenerator {
     public static void generateMaze(Graph inputGraph, Point start, Point end) {
         fifoQueue = new LinkedList<>();
         graph = inputGraph;
-        obstacleMap = new boolean[graph.getWIDTH()][graph.getHEIGHT()];
+        obstacleMap = new boolean[graph.getWidth()][graph.getHeight()];
         for(int x = 0; x < obstacleMap.length; x++) {
             Arrays.fill(obstacleMap[x], true);
         }

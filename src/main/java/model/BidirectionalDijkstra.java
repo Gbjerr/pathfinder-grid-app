@@ -28,7 +28,6 @@ public class BidirectionalDijkstra extends PathAlgorithm {
     public BidirectionalDijkstra(Point startPoint, Point endPoint, Graph graph) {
         super(graph);
         preProcessNodes(startPoint, endPoint);
-        //
         endNode.setDist(0);
 
         pathIsFound = false;

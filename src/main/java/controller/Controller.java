@@ -20,9 +20,9 @@ public class Controller {
     private PathAlgorithm alg;
     private PathFindingProcedure pathFindingProcedure;
 
-    public Controller(View view) {
+    public Controller(View view, Graph graph) {
         this.view = view;
-        graph = new Graph();
+        this.graph = graph;
         graph.populateEmpty();
 
         prepareForPathfinding(false);
@@ -71,8 +71,10 @@ public class Controller {
 
             if(pathFindingProcedure.isActive()) return;
 
-            int x = (int) (mouseEvent.getX() - (mouseEvent.getX() % 15)) / 15;
-            int y = (int) (mouseEvent.getY() - (mouseEvent.getY()) % 15) / 15;
+            double tileSideLength = screen.getTileSideLength();
+
+            int x = (int) Math.floor(mouseEvent.getX() / tileSideLength);
+            int y = (int) Math.floor(mouseEvent.getY() / tileSideLength);
 
             if(!graph.isOutOfBounds(x, y)) {
 
